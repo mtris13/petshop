@@ -6,26 +6,26 @@ using namespace std;
 
 class Account {
 protected:
-  string AccountId;
-  string AccountName;
-  string Password;
-  string Gender;
+  string accountId;
+  string accountName;
+  string password;
+  string gender;
 
 public:
-  Account() : AccountId(""), AccountName(""), Password(""), Gender("") {}
+  Account() : accountId(""), accountName(""), password(""), gender("") {}
   Account(const string &Id, const string &Name, const string &Pass,
           const string &Gen)
-      : AccountId(Id), AccountName(Name), Password(Pass), Gender(Gen) {}
+      : accountId(Id), accountName(Name), password(Pass), gender(Gen) {}
 
   // Getter
-  string getAccountId() const { return AccountId; }
-  string getAccountName() const { return AccountName; }
-  string getPassword() const { return Password; }
-  string getGender() const { return Gender; }
+  string getAccountId() const { return accountId; }
+  string getAccountName() const { return accountName; }
+  string getPassword() const { return password; }
+  string getGender() const { return gender; }
 
   // Setter
-  void setAccountId(const string &id) { AccountId = id; }
-  void setAccountName(const string &name) { AccountName = name; }
-  void setPassword(const string &password) { Password = password; }
-  void setGender(const string &gender) { Gender = gender; }
+  void setAccountId(const string &id) { this->accountId = id; }
+  void setAccountName(const string &name) { this->accountName = name; }
+  void setPassword(const string &password) { this->password = password; }
+  void setGender(const string &gender) { this->gender = gender; }
 };
