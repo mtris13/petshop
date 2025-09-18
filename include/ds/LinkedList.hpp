@@ -20,21 +20,28 @@ template <typename T>
 class LinkedList {
 private:
     Node<T> *head;
+    Node<T> *tail;
     int size;
 
 public:
     // Ham dung
-    LinkedList();
-    LinkedList(const T &value);
+    LinkedList() : head(nullptr), size(0), tail(head) {}
+    LinkedList(const T &value) : size(1), head(new Node<T>(value)), tail(head) {}
 
     // Ham huy
-    ~LinkedList();
+    ~LinkedList() {
+        while (head != nullptr) {
+            Node<T> *temp = head;
+            head = head->getNext();
+            delete temp;
+        }
+    }
 
     // Getter
     Node<T> *getHead() const;
+    Node<T> *getTail() const;
     int getSize() const;
     // Setter
-    // void setLinkedList(const LinkedList<T> &);
 
     // Operator
 
@@ -45,24 +52,12 @@ public:
     bool isEmpty() const;
     void pushBack(const T &value);
     void pushFront(const T &value);
+    void popBack();
+    void popFront();
+    void insert(int index, const T &data);
+    void erase(int index);
+    void swap(T &a, T &b);
 };
-
-// Ham dung
-template <typename T>
-LinkedList<T>::LinkedList() : head(nullptr), size(0) {}
-
-template <typename T>
-LinkedList<T>::LinkedList(const T &value) : size(1), head(new Node<T>(value)) {}
-
-// Ham huy
-template <typename T>
-LinkedList<T>::~LinkedList() {
-    while (head != nullptr) {
-        Node<T> *temp = head;
-        head = head->getNext();
-        delete temp;
-    }
-}
 
 // Getter
 template <typename T>
@@ -71,15 +66,16 @@ Node<T> *LinkedList<T>::getHead() const {
 }
 
 template <typename T>
+Node<T> *LinkedList<T>::getTail() const {
+    return tail;
+}
+
+template <typename T>
 int LinkedList<T>::getSize() const {
     return size;
 }
 
 // Setter
-// template <typename T>
-// void LinkedList<T>::setLinkedList(const LinkedList<T> &value) {
-
-// }
 
 // Display
 template <typename T>
@@ -90,7 +86,7 @@ void LinkedList<T>::printLinkedList() {
         std::cout << " ";
         temp = temp->getNext();
     }
-    cout << endl;
+    std::cout << "\n";
 }
 
 // Others
@@ -102,22 +98,120 @@ bool LinkedList<T>::isEmpty() const {
 template <typename T>
 void LinkedList<T>::pushBack(const T &value) {
     Node<T> *newNode = new Node<T>(value);
-    if (!head) {
+    if (isEmpty()) {
         head = newNode;
+        tail = newNode;
     } else {
-        Node<T> *temp = head;
-        while (temp->getNext() != nullptr) {
-            temp = temp->getNext();
-        }
-        temp->setNext(newNode);
+        tail->setNext(newNode);
+        newNode->setPrev(tail);
+        tail = newNode;
     }
     size++;
 }
 
 template <typename T>
-void LinkedList<T>::pushFront(const T &value) {
-    Node<T> *newNode = new Node<T>(value);
-    newNode->setNext(head);
-    head = newNode;
-    size++;
+void LinkedList<T>::pushFront(const T &data) {
+    Node<T> *newNode = new Node<T>(data);
+    if (isEmpty()) {
+        head = newNode;
+        tail = newNode;
+    } else {
+        newNode->setNext(head);
+        newNode->setPrev(nullptr);
+        head->setPrev(newNode);
+        head = newNode;
+    }
+    this->size++;
+}
+
+template <typename T>
+void LinkedList<T>::popBack() {
+    if (isEmpty()) {
+        std::cout << "List is empty\n";
+        return;
+    }
+    Node<T> *temp = tail;
+    if (size == 1) {
+        head = nullptr;
+        tail = nullptr;
+    } else {
+        tail = tail->getPrev();
+        tail->setNext(nullptr);
+    }
+    delete temp;
+    size--;
+}
+
+template <typename T>
+void LinkedList<T>::popFront() {
+    if (isEmpty()) {
+        std::cout << "List is empty\n";
+        return;
+    }
+    Node<T> *temp = head;
+    head = head->getNext();
+    if (head) {
+        head->setPrev(nullptr);
+    } else {
+        tail = nullptr;
+    }
+    delete temp;
+    size--;
+}
+
+template <typename T>
+void LinkedList<T>::insert(int index, const T &data) {
+    if (index < 0 || index > size) {
+        std::cout << "Index out of range\n";
+        return;
+    }
+    if (isEmpty() && index == 0) {
+        pushFront(data);
+    } else if (index == size) {
+        pushBack(data);
+    } else {
+        Node<T> *newNode = new Node<T>(data);
+        Node<T> *prevNode = head;
+        for (int i = 0; i < index - 1; i++) {
+            prevNode = prevNode->getNext();
+        }
+        newNode->setNext(prevNode->getNext());
+        newNode->setPrev(prevNode);
+        if (prevNode->getNext() != nullptr) {
+            prevNode->getNext()->setPrev(newNode);
+        }
+        prevNode->setNext(newNode);
+        this->size++;
+    }
+}
+
+template <typename T>
+void LinkedList<T>::erase(int index) {
+    if (index < 0 || index >= size) {
+        std::cout << "Index out of range\n";
+        return;
+    }
+    if (index == 0) {
+        popFront();
+    } else if (index == size - 1) {
+        popBack();
+    } else {
+        Node<T> *current = head;
+        for (int i = 0; i < index; i++) {
+            current = current->getNext();
+        }
+        current->getPrev()->setNext(current->getNext());
+        if (current->getNext() != nullptr) {
+            current->getNext()->setPrev(current->getPrev());
+        }
+        delete current;
+        this->size--;
+    }
+}
+
+template <typename T>
+void LinkedList<T>::swap(T &a, T &b) {
+    T temp = a;
+    a = b;
+    b = temp;
 }
