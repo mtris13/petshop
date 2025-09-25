@@ -13,7 +13,7 @@ protected:
   string role;
 
 public:
-  Account() : accountId(""), accountName(""), password(""), gender("") {}
+  Account() : accountId(""), accountName(""), password(""), gender(""), role("") {}
   Account(const string &Id, const string &Name, const string &Pass,
           const string &Gen, const string &Role)
       : accountId(Id), accountName(Name), password(Pass), gender(Gen),

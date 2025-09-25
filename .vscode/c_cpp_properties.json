@@ -3,13 +3,12 @@
     {
       "name": "Win32",
       "includePath": [
-        "${workspaceFolder}/include",
-        "${workspaceFolder}/data",
-        "${workspaceFolder}/src",
-        "${workspaceFolder}/**"
+        "${workspaceFolder}/include", // để dùng #include "petshop/..."
+        "${workspaceFolder}/src", // nếu cần include file cpp trong src
+        "${workspaceFolder}/**" // fallback
       ],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
-      "compilerPath": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
       "cStandard": "c17",
       "cppStandard": "gnu++17",
       "intelliSenseMode": "windows-gcc-x64"

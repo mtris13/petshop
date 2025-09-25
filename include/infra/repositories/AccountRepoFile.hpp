@@ -23,7 +23,6 @@ public:
       getline(ss, username, '|');
       getline(ss, password, '|');
       getline(ss, email, '|');
-      getline(ss, role, '|');
 
       // if (role == "ADMIN") {
       //     accounts.push_back( username, password, email));

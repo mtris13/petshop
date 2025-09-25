@@ -13,8 +13,8 @@ public:
   Client(const string &id, const string &name, const string &password,
          const string &gender, const string &street, const string &district,
          const string &city)
-      : Account(id, name, password, gender), street(street), district(district),
-        city(city) {}
+      : Account(id, name, password, gender, "C"), street(street),
+        district(district), city(city) {}
 
   // Getter
   string getStreet() const { return street; }

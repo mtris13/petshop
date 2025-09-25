@@ -1,0 +1,3 @@
+D:/petshop/build/CMakeFiles/petshop.dir
+D:/petshop/build/CMakeFiles/edit_cache.dir
+D:/petshop/build/CMakeFiles/rebuild_cache.dir
