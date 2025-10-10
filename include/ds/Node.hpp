@@ -16,7 +16,10 @@ public:
   ~Node();
 
   // Getter
-  T getData() const;
+  // Getter
+  T &getData();
+  const T &getData() const;
+
   Node *getNext() const;
   Node *getPrev() const;
 
@@ -44,7 +47,9 @@ Node<T>::Node(const T &value) : data(value), next(nullptr), prev(nullptr) {}
 template <typename T> Node<T>::~Node() {}
 
 // Getter
-template <typename T> T Node<T>::getData() const { return data; }
+template <typename T> T &Node<T>::getData() { return data; }
+
+template <typename T> const T &Node<T>::getData() const { return data; }
 
 template <typename T> Node<T> *Node<T>::getNext() const { return next; }
 

@@ -3,9 +3,19 @@
     {
       "name": "Win32",
       "includePath": [
-        "${workspaceFolder}/include", // để dùng #include "petshop/..."
-        "${workspaceFolder}/src", // nếu cần include file cpp trong src
-        "${workspaceFolder}/**" // fallback
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/include/app",
+        "${workspaceFolder}/include/app/controllers",
+        "${workspaceFolder}/include/domain",
+        "${workspaceFolder}/include/domain/entities",
+        "${workspaceFolder}/include/domain/services",
+        "${workspaceFolder}/include/ds",
+        "${workspaceFolder}/include/infra",
+        "${workspaceFolder}/include/infra/repositories",
+        "${workspaceFolder}/include/infra/serialization",
+        "${workspaceFolder}/include/utils",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/**"
       ],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
       "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
