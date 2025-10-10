@@ -1,7 +1,29 @@
-# Build folder
-build/
+# Ignore build artifacts
+/build/
+*/build/
 
+# Ignore compiled binaries
 *.exe
+*.out
 *.obj
 *.o
+*.a
+*.so
+*.dll
+*.lib
+
+# Ignore CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.user
 *.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
