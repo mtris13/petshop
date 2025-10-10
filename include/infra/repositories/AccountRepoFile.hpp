@@ -1,3 +1,4 @@
+// Làm việc với file lưu tài khoản
 #pragma once
 #include "domain/entities/Account.hpp"
 #include "ds/LinkedList.hpp"
