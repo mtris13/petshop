@@ -1,48 +1,44 @@
-#include "ds/LinkedList.hpp"
+#include "domain/entities/Client.hpp"
+#include "domain/entities/Staff.hpp"
+#include "domain/services/AuthService.hpp"
 #include <iostream>
+#include <typeinfo>
+
 using namespace std;
 
-void testLinkedList() {
-  LinkedList<int> list;
-
-  cout << "=== Test pushBack ===\n";
-  list.pushBack(10);
-  list.pushBack(20);
-  list.pushBack(30);
-  list.printLinkedList(); // 10 20 30
-
-  cout << "=== Test pushFront ===\n";
-  list.pushFront(5);
-  list.pushFront(1);
-  list.printLinkedList(); // 1 5 10 20 30
-
-  cout << "=== Test popFront ===\n";
-  list.popFront();
-  list.printLinkedList(); // 5 10 20 30
-
-  cout << "=== Test popBack ===\n";
-  list.popBack();
-  list.printLinkedList(); // 5 10 20
-
-  cout << "=== Test insert ===\n";
-  list.insert(1, 7);      // chèn 7 vào vị trí 1
-  list.printLinkedList(); // 5 7 10 20
-
-  cout << "=== Test erase ===\n";
-  list.erase(2);          // xóa phần tử tại vị trí 2
-  list.printLinkedList(); // 5 7 20
-
-  cout << "=== Test swap ===\n";
-  int a = 100, b = 200;
-  cout << "Before swap: a=" << a << " b=" << b << endl;
-  list.swap(a, b);
-  cout << "After swap: a=" << a << " b=" << b << endl;
-
-  cout << "=== Final LinkedList ===\n";
-  list.printLinkedList();
-}
-
 int main() {
-  testLinkedList();
+  AuthService auth;
+
+  string username, password;
+  cout << "Nhap ten dang nhap: ";
+  cin >> username;
+  cout << "Nhap mat khau: ";
+  cin >> password;
+
+  Account *user = auth.login(username, password);
+
+  if (user) {
+    cout << "---------------------------------\n";
+    cout << "Thong tin tai khoan:\n";
+    cout << "ID: " << user->getAccountId() << endl;
+    cout << "Ten: " << user->getAccountName() << endl;
+    cout << "Gioi tinh: " << user->getGender() << endl;
+    cout << "Vai tro: " << user->getRole() << endl;
+
+    // Kiểm tra kiểu thực tế của đối tượng bằng dynamic_cast
+    if (auto staff = dynamic_cast<Staff *>(user)) {
+      cout << "Luong: " << staff->getSalary() << endl;
+    } else if (auto client = dynamic_cast<Client *>(user)) {
+      cout << "Dia chi: " << client->getStreet() << ", "
+           << client->getDistrict() << ", " << client->getCity() << endl;
+    } else {
+      cout << "Loai tai khoan khac (Admin hoac khong xac dinh).\n";
+    }
+
+    cout << "---------------------------------\n";
+  } else {
+    cout << "Dang nhap that bai.\n";
+  }
+
   return 0;
 }

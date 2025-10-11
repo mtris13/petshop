@@ -1,42 +1,73 @@
 #pragma once
-#include "domain/entities/Admin.hpp"
+#include "domain/entities/Account.hpp"
 #include "domain/entities/Client.hpp"
 #include "domain/entities/Staff.hpp"
+
+#include "ds/LinkedList.hpp"
 #include <fstream>
 #include <sstream>
-#include <vector>
 
-class AccountRepoFile {
+class AccountRepository {
 private:
   string filePath;
+  LinkedList<Account *> accounts;
 
 public:
-  AccountRepoFile(const string &path) : filePath(path) {}
-  vector<Account *> getAllAccounts() {
-    vector<Account *> accounts;
+  AccountRepository(const string &path = "../data/accounts.txt")
+      : filePath(path) {
+    loadFromFile();
+  }
+
+  void loadFromFile() {
     ifstream file(filePath);
+    if (!file.is_open()) {
+      cerr << "Error: Cannot open accounts file.\n";
+      return;
+    }
+
     string line;
     while (getline(file, line)) {
       stringstream ss(line);
-      string id, username, password, email, role;
+      string id, name, pass, gender, role;
       getline(ss, id, '|');
-      getline(ss, username, '|');
-      getline(ss, password, '|');
-      getline(ss, email, '|');
+      getline(ss, name, '|');
+      getline(ss, pass, '|');
+      getline(ss, gender, '|');
+      getline(ss, role, '|');
 
-      // if (role == "ADMIN") {
-      //     accounts.push_back( username, password, email));
-      // } else if (role == "STAFF") {
-      //     string salaryStr;
-      //     getline(ss, salaryStr, '|');
-      //     double salary = stod(salaryStr);
-      //     accounts.push_back(new Staff(stoi(id), username, password, email,
-      //     salary));
-      // } else if (role == "CLIENT") {
-      //     accounts.push_back(new Client(stoi(id), username, password,
-      //     email));
-      // }
+      Account *acc = nullptr;
+
+      if (role == "C") {
+        string street, district, city;
+        getline(ss, street, '|');
+        getline(ss, district, '|');
+        getline(ss, city, '|');
+        acc = new Client(id, name, pass, gender, street, district, city);
+      } else if (role == "S") {
+        double salary;
+        ss >> salary;
+        acc = new Staff(id, name, pass, gender, salary);
+      } else {
+        acc = new Account(id, name, pass, gender, role);
+      }
+
+      accounts.pushBack(acc);
     }
-    return accounts;
+
+    file.close();
   }
+
+  Account *findAccountByNameAndPass(const string &name, const string &pass) {
+    Node<Account *> *current = accounts.getHead();
+    while (current != nullptr) {
+      Account *acc = current->getData();
+      if (acc->getAccountName() == name && acc->getPassword() == pass) {
+        return acc;
+      }
+      current = current->getNext();
+    }
+    return nullptr;
+  }
+
+  LinkedList<Account *> &getAllAccounts() { return accounts; }
 };
