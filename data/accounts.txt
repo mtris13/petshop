@@ -1,3 +1,4 @@
-1|admin|123|A
-2|staff|123|S
-3|client|123|C
+1|admin|123|Nam|A
+2|staff|123|Nu|S|15000000
+3|hnguyn|123|Nu|C|57 Hoang Dinh Ai|Hoa Xuan|Da Nang
+4|mtri|123|Nu|C|Tam Hoa|Nui Thanh|Da Nang
