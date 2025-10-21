@@ -4,17 +4,13 @@
 #include <sstream>
 #include <string>
 
-#define adminIdLength 3
-#define staffIdLength 5
-#define clientIdLength 10
-
 string AccountRepository::filePath(const string &loginCode) {
     int length = loginCode.length();
-    if (length == AdminCodeLength)
+    if (length == AdminIdLength)
         return AdminAccountFilePath;
-    if (length == ClientCodeLength)
+    if (length == ClientIdLength)
         return ClientAccountFilePath;
-    if (length == StaffCodeLength)
+    if (length == StaffIdLength)
         return StaffAccountFilePath;
 
     return invalid;
@@ -89,6 +85,27 @@ void AccountRepository::writingFile(const string &loginCode, const string &write
 
     if (rename(tempPath.c_str(), path.c_str()) != 0)
         cerr << "Error: Could not rename temp file to " << path << '\n';
+}
+
+Account *AccountRepository::findAccountById(const string &loginCode) {
+    if (!isValidId(loginCode))
+        return nullptr;
+
+    int length = loginCode.length();
+    if (length == 3) { // Admin
+        Admin ad = getAdminInfo(loginCode);
+        return new Admin(ad);
+    }
+    if (length == 5) { // Staff
+        Staff st = getStaffInfo(loginCode);
+        return new Staff(st);
+    }
+    if (length == 10) { // Client
+        Client cl = getClientInfo(loginCode);
+        return new Client(cl);
+    }
+
+    return nullptr;
 }
 
 string AccountRepository::getAccountPassword(const string &loginCode) {

@@ -1,0 +1,2 @@
+c001|Golden|British Shorthair|3|8000000|Short
+c002|Cattie|Birman|4|9200000|Long

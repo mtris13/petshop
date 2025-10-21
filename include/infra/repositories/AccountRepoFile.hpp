@@ -25,9 +25,9 @@ private:
     const string AdminAccountFilePath = "../data/AdminAccount.txt";
     const string ClientAccountFilePath = "../data/ClientAccount.txt";
     const string StaffAccountFilePath = "../data/StaffAccount.txt";
-    const int AdminCodeLength = 3;
-    const int ClientCodeLength = 10; // so dien thoai
-    const int StaffCodeLength = 5;   // che giấu những const để các file khác không nhìn thấy được
+    const int AdminIdLength = 3;
+    const int ClientIdLength = 10; // so dien thoai
+    const int StaffIdLength = 5;   // che giấu những const để các file khác không nhìn thấy được
     const string invalid = "";
 
     string filePath(const string &loginCode);
@@ -52,4 +52,5 @@ public:
     bool isValidId(const string &loginCode);
     bool isValidPassword(const string &loginCode, const string &attemptPassword);
     void deleteAccount(const string &loginCode);
+    Account *findAccountById(const string &loginCode);
 };

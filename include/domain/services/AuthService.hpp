@@ -17,20 +17,23 @@ private:
 
 public:
     AuthService() = default;
-    void login() {
+    Account *login() {
         string id, pass;
         do {
             cout << "Enter your ID: ";
             cin >> id;
             cout << "Enter your password: ";
             cin >> pass;
-            if (accountRepo.isValidPassword(id, pass))
-                break;
+
+            if (accountRepo.isValidPassword(id, pass)) {
+                cout << "Login successfully! Welcome to PETSHOP.\n";
+                return accountRepo.findAccountById(id);
+            }
+
             cout << "Your ID or password is not correct!\n";
             cin.get();
             system("cls");
         } while (true);
-        cout << "Login successfully! Welcome" << " to PETSHOP.";
     }
 
     Client *createClientAccount() {
