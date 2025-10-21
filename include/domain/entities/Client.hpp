@@ -4,25 +4,20 @@ using namespace std;
 
 class Client : public Account {
 private:
-  string street;
-  string district;
-  string city;
+    string street;
+    // string district; // deleted this
+    string city;
 
 public:
-  Client() : Account(), street(""), district(""), city("") {}
-  Client(const string &id, const string &name, const string &password,
-         const string &gender, const string &street, const string &district,
-         const string &city)
-      : Account(id, name, password, gender, "C"), street(street),
-        district(district), city(city) {}
+    Client() : Account(), street(""), city("") {}
+    Client(const string &id, const string &name, const string &password, const string &gender, const string &street, const string &city)
+        : Account(id, name, password, gender), street(street), city(city) {}
 
-  // Getter
-  string getStreet() const { return street; }
-  string getDistrict() const { return district; }
-  string getCity() const { return city; }
+    // Getter
+    string getStreet() const { return street; }
+    string getCity() const { return city; }
 
-  // Setter
-  void setStreet(const string &street) { this->street = street; }
-  void setDistrict(const string &district) { this->district = district; }
-  void setCity(const string &city) { this->city = city; }
+    // Setter
+    void setStreet(const string &street) { this->street = street; }
+    void setCity(const string &city) { this->city = city; }
 };
