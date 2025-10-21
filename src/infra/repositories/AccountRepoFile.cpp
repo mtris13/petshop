@@ -8,30 +8,245 @@
 #define staffIdLength 5
 #define clientIdLength 10
 
-bool AccountRepoFile::checkAccount(const string &id, const string &password) {
-    fstream accountFile(filePath);
-    string line;
-    while (getline(accountFile, line)) {
-        stringstream ss(line);
-        string userId, pass;
-        ss >> userId >> pass;
-        if (id == userId && password == pass)
-            return true;
-    }
-    return false;
+string AccountRepository::filePath(const string &loginCode) {
+    int length = loginCode.length();
+    if (length == AdminCodeLength)
+        return AdminAccountFilePath;
+    if (length == ClientCodeLength)
+        return ClientAccountFilePath;
+    if (length == StaffCodeLength)
+        return StaffAccountFilePath;
+
+    return invalid;
 }
 
-bool AccountRepoFile::checkExitId(const string &id) {
-    fstream accountFile(filePath);
-    string line;
-    while (getline(accountFile, line)) {
-        stringstream ss(line);
-        string userId, pass;
-        ss >> userId >> pass;
-        if (id == userId)
-            return true;
+string AccountRepository::readingFile(const string &loginCode) {
+    ifstream file(filePath(loginCode));
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << filePath(loginCode) << '\n';
+        return invalid;
     }
-    return false;
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        string code;
+        getline(ss, code, '|');
+        if (code == loginCode) {
+            file.close();
+            return line;
+        }
+    }
+    return invalid;
 }
 
-void saveAccount(const string &id, const string &password);
+void AccountRepository::writingFile(const string &loginCode, const string &writeLine) {
+    const string path = filePath(loginCode);
+    if (path == invalid) {
+        cerr << "Error: Invalid file path for loginCode " << loginCode << '\n';
+        return;
+    }
+    const string tempPath = "../data/temp.txt";
+
+    ifstream in(path);
+    ofstream out(tempPath);
+
+    if (!out.is_open()) {
+        cerr << "Error: Cant create temp file " << tempPath << '\n';
+        in.close();
+        return;
+    }
+
+    string line;
+    bool foundAndUpdated = false;
+
+    if (in.is_open()) {
+        while (getline(in, line)) {
+            if (line.empty())
+                continue;
+
+            stringstream ss(line);
+            string code;
+            getline(ss, code, '|');
+
+            if (code == loginCode) {
+                out << writeLine << '\n';
+                foundAndUpdated = true;
+            } else
+                out << line << '\n';
+        }
+    }
+
+    if (!foundAndUpdated) {
+        out << writeLine << '\n';
+    }
+
+    in.close();
+    out.close();
+    if (remove(path.c_str()) != 0 && in.is_open())
+        cerr << "Error: Could not remove original file " << path << '\n';
+
+    if (rename(tempPath.c_str(), path.c_str()) != 0)
+        cerr << "Error: Could not rename temp file to " << path << '\n';
+}
+
+string AccountRepository::getAccountPassword(const string &loginCode) {
+    string info = readingFile(loginCode);
+    if (info == invalid)
+        return invalid;
+    string code, username, pw;
+    stringstream ss(info);
+    getline(ss, code, '|');
+    getline(ss, username, '|');
+    getline(ss, pw, '|');
+    return pw;
+}
+
+// GET
+string AccountRepository::getAccountName(const string &loginCode) {
+    string info = readingFile(loginCode);
+    if (info == invalid)
+        return invalid;
+    string code, username;
+    stringstream ss(info);
+    getline(ss, code, '|');
+    getline(ss, username, '|');
+    return username;
+}
+
+string AccountRepository::getAccountGender(const string &loginCode) {
+    string info = readingFile(loginCode);
+    if (info == invalid)
+        return invalid;
+    string dummy, gender;
+    stringstream ss(info);
+    getline(ss, dummy, '|');
+    getline(ss, dummy, '|');
+    getline(ss, dummy, '|');
+    getline(ss, gender, '|');
+    return gender;
+}
+
+Admin AccountRepository::getAdminInfo(const string &loginCode) {
+    Admin info;
+    string line = readingFile(loginCode);
+    if (line == invalid)
+        return info; // tra ve thong tin rong
+    string code, username, pw, gender;
+    stringstream ss(line);
+    getline(ss, code, '|');
+    getline(ss, username, '|');
+    getline(ss, pw, '|');
+    getline(ss, gender, '|');
+    info = Admin(code, username, pw, gender);
+    return info;
+}
+
+Staff AccountRepository::getStaffInfo(const string &loginCode) {
+    Staff info;
+    string line = readingFile(loginCode);
+    if (line == invalid)
+        return info; // tra ve thong tin rong
+    string code, username, pw, gender, salary;
+    stringstream ss(line);
+    getline(ss, code, '|');
+    getline(ss, username, '|');
+    getline(ss, pw, '|');
+    getline(ss, gender, '|');
+    getline(ss, salary, '|');
+    info = Staff(code, username, pw, gender, stof(salary));
+    return info;
+}
+
+Client AccountRepository::getClientInfo(const string &loginCode) {
+    Client info;
+    string line = readingFile(loginCode);
+    if (line == invalid)
+        return info; // tra ve thong tin rong
+    string code, username, pw, gender, street, city;
+    stringstream ss(line);
+    getline(ss, code, '|');
+    getline(ss, username, '|');
+    getline(ss, pw, '|');
+    getline(ss, gender, '|');
+    getline(ss, street, '|');
+    getline(ss, city, '|');
+    info = Client(code, username, pw, gender, street, city);
+    return info;
+}
+
+// SET
+void AccountRepository::setAdminInfo(const Admin &ad) {
+    string line = ad.getId() + '|' + ad.getName() + '|' + ad.getPassword() + '|' + ad.getGender();
+    writingFile(ad.getId(), line);
+}
+
+void AccountRepository::setStaffInfo(const Staff &st) {
+    string line = st.getId() + '|' + st.getName() + '|' + st.getPassword() + '|' + st.getGender() + '|' + to_string(st.getSalary());
+    writingFile(st.getId(), line);
+}
+
+void AccountRepository::setClientInfo(const Client &cl) {
+    string line = cl.getId() + '|' + cl.getName() + '|' + cl.getPassword() + '|' + cl.getGender() + '|' + cl.getStreet() + '|' + cl.getCity();
+    writingFile(cl.getId(), line);
+}
+
+// ANOTHER
+bool AccountRepository::isValidId(const string &loginCode) {
+    string info = readingFile(loginCode);
+    if (info == invalid)
+        return false;
+    return true;
+}
+
+bool AccountRepository::isValidPassword(const string &loginCode, const string &attemptPassword) {
+    string pw = getAccountPassword(loginCode);
+    if (pw == invalid || attemptPassword != pw)
+        return false;
+    return true;
+}
+
+void AccountRepository::deleteAccount(const string &loginCode) {
+    const string path = filePath(loginCode);
+    if (path == invalid)
+        return;
+
+    const string tempPath = "../data/temp.txt";
+    ifstream in(path);
+    ofstream out(tempPath);
+
+    if (!in.is_open() || !out.is_open()) {
+        cerr << "Error opening files for removal." << endl;
+        in.close();
+        out.close();
+        return;
+    }
+
+    string line;
+    bool removed = false;
+    while (getline(in, line)) {
+        if (line.empty())
+            continue;
+
+        stringstream ss(line);
+        string code;
+        getline(ss, code, '|');
+
+        if (code == loginCode)
+            removed = true;
+        else
+            out << line << '\n';
+    }
+
+    in.close();
+    out.close();
+
+    if (removed) {
+        remove(path.c_str());
+        rename(tempPath.c_str(), path.c_str());
+    } else {
+        // Nếu không tìm thấy, không cần làm gì, chỉ cần xóa file temp
+        remove(tempPath.c_str());
+    }
+}
