@@ -4,7 +4,6 @@
       "name": "Win32",
       "includePath": [
         "${workspaceFolder}/include",
-<<<<<<< HEAD
         "${workspaceFolder}/include/app",
         "${workspaceFolder}/include/app/controllers",
         "${workspaceFolder}/include/domain",
@@ -15,8 +14,6 @@
         "${workspaceFolder}/include/infra/repositories",
         "${workspaceFolder}/include/infra/serialization",
         "${workspaceFolder}/include/utils",
-=======
->>>>>>> fe535e5ede0659fb4dbf992c745c7ef5c4e7271a
         "${workspaceFolder}/src",
         "${workspaceFolder}/**"
       ],
