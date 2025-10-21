@@ -1,6 +1,9 @@
 Chứa dữ liệu dạng TXT của PetShop:
 
-- accounts.txt: thông tin user (admin, staff, client)
+- accounts: thông tin user (admin, staff, client)
+    AdminAccount.txt
+    ClientAccount.txt
+    StaffAccount.txt
 - pets.txt: thông tin thú cưng
 - services.txt: danh sách dịch vụ
 - vouchers.txt: thông tin voucher
