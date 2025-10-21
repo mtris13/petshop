@@ -1,7 +1,9 @@
 /* Chức năng đăng nhập */
+#include "domain/entities/Admin.hpp"
 #include "domain/entities/Client.hpp"
 #include "domain/entities/Staff.hpp"
 #include "infra/repositories/AccountRepoFile.hpp"
+// #include <conio.h>
 #include <iostream>
 
 using namespace std;
@@ -9,9 +11,53 @@ using namespace std;
 class AuthService {
 private:
     AccountRepository accountRepo;
+    const int AdminIdLength = 3;
+    const int ClientIdLength = 10; // so dien thoai
+    const int StaffIdLength = 5;
 
 public:
     AuthService() = default;
+    void login() {
+        string id, pass;
+        do {
+            cout << "Enter your ID: ";
+            cin >> id;
+            cout << "Enter your password: ";
+            cin >> pass;
+            if (accountRepo.isValidPassword(id, pass))
+                break;
+            cout << "Your ID or password is not correct!\n";
+            cin.get();
+            system("cls");
+        } while (true);
+        cout << "Login successfully! Welcome" << " to PETSHOP.";
+    }
+
+    Client *createClientAccount() {
+        Client client;
+        string id, name, pw, gender, street, city;
+        do {
+            cout << "Enter your phone number (ID): ";
+            cin >> id;
+            if (id.length() != ClientIdLength) {
+                cout << "Unvalid phone number!\n";
+                continue;
+            }
+            cout << "Enter your name: ";
+            cin >> name;
+            cout << "Enter your password: ";
+            cin >> pw;
+            cout << "1. Male\n2. Female\nEnter your gender: ";
+            cin >> gender;
+            gender = (gender == "1") ? "male" : "female"; // rcm chuyển thành ấn nút trong QT
+            cout << "Enter your address: ";
+            cin >> street;
+            cout << "Enter your city: ";
+            cin >> city;
+            break;
+        } while (true);
+    }
+
     // WILL REMAKE
 
     // Account *login(const string &username, const string &password) {
