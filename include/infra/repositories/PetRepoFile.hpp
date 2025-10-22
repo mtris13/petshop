@@ -39,11 +39,11 @@ private:
                 return line;
             }
         }
-        return invalid;
+        return invalid; // not found
     }
 
-    void PetRepoFile::writingFile(const string &petCode, const string &writeLine) {
-        const string path = getPetFilePath(petCode);
+    void writingFile(const string &petCode, const string &writeLine) {
+        const string path = filePath(petCode);
         if (path == invalid) {
             cerr << "Error: Invalid file path for petCode " << petCode << '\n';
             return;
@@ -96,5 +96,142 @@ private:
             cerr << "Error: Could not rename temp file to " << path << '\n';
     }
 
+    bool isDogId(const string &petCode) {
+        if (petCode.length() == petIdLength && petCode[0] == 'd')
+            return true;
+        return false;
+    }
+
 public:
+    // GET
+    string getPetStatus(const string &petCode) {
+        string info = readingFile(petCode);
+        if (info == invalid)
+            return invalid;
+        string code, status;
+        stringstream ss(info);
+        getline(ss, code, '|');
+        getline(ss, status, '|');
+        if (status == "1")
+            return "available";
+        return "unavailable";
+    }
+
+    Dog getDogInfo(const string &petCode) {
+        Dog dog;
+        if (!isDogId(petCode))
+            return dog;
+        string info = readingFile(petCode);
+        if (info == invalid)
+            return dog;
+        string code, status, name, breed, age, price, energy;
+        stringstream ss(info);
+        getline(ss, code, '|');
+        getline(ss, status, '|');
+        getline(ss, name, '|');
+        getline(ss, breed, '|');
+        getline(ss, age, '|');
+        getline(ss, price, '|');
+        getline(ss, energy, '|');
+        dog = Dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+        return dog;
+    }
+
+    Cat getCatInfo(const string &petCode) {
+        Cat cat;
+        if (!isDogId(petCode))
+            return cat;
+        string info = readingFile(petCode);
+        if (info == invalid)
+            return cat;
+        string code, status, name, breed, age, price, fur;
+        stringstream ss(info);
+        getline(ss, code, '|');
+        getline(ss, status, '|');
+        getline(ss, name, '|');
+        getline(ss, breed, '|');
+        getline(ss, age, '|');
+        getline(ss, price, '|');
+        getline(ss, fur, '|');
+        cat = Cat(code, name, breed, stoi(age), stof(price), fur);
+        return cat;
+    }
+
+    // SET
+    void setDogInfo(const Dog &dog) {
+        string line = dog.getId() + "|1|" + dog.getName() + '|' + dog.getBreed() + '|' + to_string(dog.getAge()) + '|' + to_string(dog.getPrice()) + '|' + to_string(dog.getEnergyLevel());
+        writingFile(dog.getId(), line);
+    }
+
+    void setCatInfo(const Cat &cat) {
+        string line = cat.getId() + "|1|" + cat.getName() + '|' + cat.getBreed() + '|' + to_string(cat.getAge()) + '|' + to_string(cat.getPrice()) + '|' + cat.getFurLength();
+        writingFile(cat.getId(), line);
+    }
+
+    void setStatusUnavailable(const string &petCode) {
+        string info = readingFile(petCode);
+        info[5] = '0';
+        writingFile(petCode, info);
+    } // use when pet is bought
+
+    void setStatusAvailable(const string &petCode) {
+        string info = readingFile(petCode);
+        info[5] = '1';
+        writingFile(petCode, info);
+    } // use when pet is restored
+
+    // OTHERS
+    bool isAvailablePet(const string &petCode) {
+        string info = readingFile(petCode);
+        return (info[5] == '1' ? true : false);
+    }
+
+    bool isValidPetId(const string &petCode) {
+        string info = readingFile(petCode);
+        return (info == invalid ? false : true);
+    }
+
+    void deletePet(const string &petCode) {
+        const string path = filePath(petCode);
+        if (path == invalid)
+            return;
+
+        const string tempPath = "../data/temp.txt";
+        ifstream in(path);
+        ofstream out(tempPath);
+
+        if (!in.is_open() || !out.is_open()) {
+            cerr << "Error opening files for removal.\n";
+            in.close();
+            out.close();
+            return;
+        }
+
+        string line;
+        bool removed = false;
+        while (getline(in, line)) {
+            if (line.empty())
+                continue;
+
+            stringstream ss(line);
+            string code;
+            getline(ss, code, '|');
+
+            if (code == petCode)
+                removed = true;
+            else
+                out << line << '\n';
+        }
+
+        in.close();
+        out.close();
+
+        if (removed) {
+            remove(path.c_str());
+            rename(tempPath.c_str(), path.c_str());
+        } else {
+            // Nếu không tìm thấy, không cần làm gì, chỉ cần xóa file temp
+            remove(tempPath.c_str());
+        }
+    }
 };

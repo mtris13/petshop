@@ -6,7 +6,8 @@ private:
     string furLength; // Độ dài lông: Short, Medium, Long
 
 public:
-    Cat(int id, const string &name, const string &breed, int age, float price,
+    Cat() {}
+    Cat(string id, const string &name, const string &breed, int age, float price,
         const string &furLength = "Short")
         : Pet(id, name, breed, age, price), furLength(furLength) {}
 

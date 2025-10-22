@@ -147,6 +147,8 @@ string AccountRepository::getAccountGender(const string &loginCode) {
 
 Admin AccountRepository::getAdminInfo(const string &loginCode) {
     Admin info;
+    if (loginCode.length() != AdminIdLength)
+        return info;
     string line = readingFile(loginCode);
     if (line == invalid)
         return info; // tra ve thong tin rong
@@ -162,6 +164,8 @@ Admin AccountRepository::getAdminInfo(const string &loginCode) {
 
 Staff AccountRepository::getStaffInfo(const string &loginCode) {
     Staff info;
+    if (loginCode.length() != StaffIdLength)
+        return info;
     string line = readingFile(loginCode);
     if (line == invalid)
         return info; // tra ve thong tin rong
@@ -178,6 +182,8 @@ Staff AccountRepository::getStaffInfo(const string &loginCode) {
 
 Client AccountRepository::getClientInfo(const string &loginCode) {
     Client info;
+    if (loginCode.length() != ClientIdLength)
+        return info;
     string line = readingFile(loginCode);
     if (line == invalid)
         return info; // tra ve thong tin rong
@@ -209,7 +215,7 @@ void AccountRepository::setClientInfo(const Client &cl) {
     writingFile(cl.getId(), line);
 }
 
-// ANOTHER
+// OTHERS
 bool AccountRepository::isValidId(const string &loginCode) {
     string info = readingFile(loginCode);
     if (info == invalid)
