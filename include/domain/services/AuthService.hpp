@@ -70,7 +70,8 @@ public:
     //     return nullptr;
     //   }
 
-    //   cout << "Dang nhap thanh cong! Xin chao " << acc->getAccountName() << " ("
+    //   cout << "Dang nhap thanh cong! Xin chao " << acc->getAccountName() << "
+    //   ("
     //        << acc->getRole() << ")\n";
 
     //   // displayAccountInfo(acc);
