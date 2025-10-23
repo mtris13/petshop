@@ -34,11 +34,17 @@ public:
     // Phương thức ảo để biết loại thú
     virtual string getType() const = 0;
 
-    virtual void showInfo() const {
-        cout << "ID: " << id << "\n"
-             << "Name: " << name << "\n"
-             << "Breed: " << breed << "\n"
-             << "Age: " << age << "\n"
-             << "Price: " << price << "\n";
+    virtual void showInfo(ostream &out) const {
+        out << "ID: " << id << "\n"
+            << "Name: " << name << "\n"
+            << "Breed: " << breed << "\n"
+            << "Age: " << age << "\n"
+            << "Price: " << price << "\n";
     }
+    friend ostream &operator<<(ostream &out, const Pet &pet);
 };
+
+ostream &operator<<(ostream &out, const Pet &pet) {
+    pet.showInfo(out);
+    return out;
+}
