@@ -7,7 +7,7 @@ private:
 
 public:
     Dog() {}
-    Dog(int id, const string &name, const string &breed, int age, double price,
+    Dog(string id, const string &name, const string &breed, int age, float price,
         int energyLevel = 5)
         : Pet(id, name, breed, age, price), energyLevel(energyLevel) {}
 
@@ -16,9 +16,9 @@ public:
 
     string getType() const override { return "Dog"; }
 
-    void showInfo() const override {
+    void showInfo(ostream &out) const override {
         cout << "=== DOG INFO ===\n";
-        Pet::showInfo();
+        Pet::showInfo(out);
         cout << "Energy Level: " << energyLevel << "/10\n";
     }
 };

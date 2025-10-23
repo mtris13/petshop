@@ -144,6 +144,61 @@ Cat PetRepository::getCatInfo(const string &petCode) {
     return cat;
 }
 
+LinkedList<Cat> *PetRepository::getAllCatInfoAvailable() {
+    LinkedList<Cat> *arr;
+    ifstream file(catFilePath);
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << catFilePath << '\n';
+        return nullptr;
+    }
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+        if (line[5] == '1') { // available pet
+            string code, status, name, breed, age, price, fur;
+            stringstream ss(line);
+            getline(ss, code, '|');
+            getline(ss, status, '|');
+            getline(ss, name, '|');
+            getline(ss, breed, '|');
+            getline(ss, age, '|');
+            getline(ss, price, '|');
+            getline(ss, fur, '|');
+            Cat cat(code, name, breed, stoi(age), stof(price), fur);
+            arr->pushBack(cat);
+        }
+    }
+    return arr;
+}
+LinkedList<Dog> *PetRepository::getAllDogInfoAvailable() {
+    LinkedList<Dog> *arr;
+    ifstream file(catFilePath);
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << catFilePath << '\n';
+        return nullptr;
+    }
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+        if (line[5] == '1') { // available pet
+            string code, status, name, breed, age, price, energy;
+            stringstream ss(line);
+            getline(ss, code, '|');
+            getline(ss, status, '|');
+            getline(ss, name, '|');
+            getline(ss, breed, '|');
+            getline(ss, age, '|');
+            getline(ss, price, '|');
+            getline(ss, energy, '|');
+            Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+            arr->pushBack(dog);
+        }
+    }
+    return arr;
+}
+
 // SET
 void PetRepository::setDogInfo(const Dog &dog) {
     string line = dog.getId() + "|1|" + dog.getName() + '|' + dog.getBreed() + '|' + to_string(dog.getAge()) + '|' + to_string(dog.getPrice()) + '|' + to_string(dog.getEnergyLevel());
@@ -170,6 +225,8 @@ void PetRepository::setStatusAvailable(const string &petCode) {
 // OTHERS
 bool PetRepository::isAvailablePet(const string &petCode) {
     string info = readingFile(petCode);
+    if (info == invalid)
+        return false;
     return (info[5] == '1' ? true : false);
 }
 

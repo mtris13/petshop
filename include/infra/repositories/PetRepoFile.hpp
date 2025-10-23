@@ -3,6 +3,7 @@
 #include "include/domain/entities/Cat.hpp"
 #include "include/domain/entities/Dog.hpp"
 #include "include/domain/entities/Pet.hpp"
+#include "include/ds/LinkedList.hpp"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -23,6 +24,8 @@ public:
     string getPetStatus(const string &petCode);
     Dog getDogInfo(const string &petCode);
     Cat getCatInfo(const string &petCode);
+    LinkedList<Cat> *getAllCatInfoAvailable();
+    LinkedList<Dog> *getAllDogInfoAvailable();
     // SET
     void setDogInfo(const Dog &dog);
     void setCatInfo(const Cat &cat);

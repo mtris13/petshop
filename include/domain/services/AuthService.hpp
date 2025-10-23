@@ -1,7 +1,5 @@
 /* Chức năng đăng nhập */
-#include "domain/entities/Admin.hpp"
-#include "domain/entities/Client.hpp"
-#include "domain/entities/Staff.hpp"
+#pragma once
 #include "infra/repositories/AccountRepoFile.hpp"
 // #include <conio.h>
 #include <iostream>
