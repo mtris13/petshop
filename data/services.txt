@@ -1,0 +1,6 @@
+SP001|Basic Spa Package|Relaxing spa treatment with bath and massage|200000|60
+SP002|Premium Spa Package|Luxury spa with aromatherapy and premium products|400000|90
+SP003|Express Spa|Quick refresh spa treatment|150000|30
+SP004|Deep Relaxation Spa|Full body massage and aromatherapy session|350000|120
+SP005|Paw & Nail Care|Specialized paw treatment and nail grooming|100000|45
+SP006|Fur Conditioning Spa|Deep conditioning treatment for healthy fur|250000|75
