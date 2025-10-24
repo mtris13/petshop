@@ -1,2 +1,10 @@
 d001|0|Petie|Husky|8|20000000|8
 d002|1|Ki|Puppy|2|3000000|2
+d003|0|Max|Golden Retriever|4|9500000|7
+d004|1|Luna|Poodle|3|7000000|5
+d005|0|Rocky|German Shepherd|5|12000000|9
+d006|1|Mimi|Corgi|2|8500000|6
+d007|0|Buddy|Shiba Inu|3|10000000|8
+d008|1|Daisy|Beagle|4|7800000|7
+d009|0|Charlie|Bulldog|6|11000000|4
+d010|1|Coco|Pomeranian|1|6800000|9

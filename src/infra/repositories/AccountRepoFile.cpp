@@ -18,7 +18,7 @@ string AccountRepository::filePath(const string &loginCode) {
 string AccountRepository::readingFile(const string &loginCode) {
   ifstream file(filePath(loginCode));
   if (!file.is_open()) {
-    cerr << "Error: Cant open file " << filePath(loginCode) << '\n';
+    // cerr << "Error: Cant open file " << filePath(loginCode) << '\n';
     return invalid;
   }
   string line;
