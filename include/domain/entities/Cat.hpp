@@ -16,9 +16,9 @@ public:
 
     string getType() const override { return "Cat"; }
 
-    void showInfo() const override {
+    void showInfo(ostream &out) const override {
         cout << "=== CAT INFO ===\n";
-        Pet::showInfo();
+        Pet::showInfo(out);
         cout << "Fur Length: " << furLength << "\n";
     }
 };
