@@ -1,2 +1,2 @@
-001|Hanh Nguyen|123|female
-002|Minh Tri|123|male
+001|Hanh Nguyen|000|female
+002|Minh Tri|000|male
