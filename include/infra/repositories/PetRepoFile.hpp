@@ -1,11 +1,15 @@
-/* đọc ghi file Dog/Cat available/unvailable */
+/* PetRepoFile.hpp - đọc và ghi các file Pet (COMPLETED) */
+
 #pragma once
 #include "domain/entities/Cat.hpp"
 #include "domain/entities/Dog.hpp"
 #include "domain/entities/Pet.hpp"
+#include "ds/LinkedList.hpp"
 #include <fstream>
 #include <sstream>
 #include <string>
+
+using namespace std;
 
 class PetRepository {
 private:
@@ -13,6 +17,7 @@ private:
   const string dogFilePath = "../data/Dog.txt";
   const int petIdLength = 4;
   const string invalid = "";
+
   string filePath(const string &petCode) {
     if (petCode.length() != petIdLength)
       return invalid;
@@ -108,6 +113,7 @@ public:
     string info = readingFile(petCode);
     if (info == invalid)
       return invalid;
+
     string code, status;
     stringstream ss(info);
     getline(ss, code, '|');
@@ -139,11 +145,13 @@ public:
 
   Cat getCatInfo(const string &petCode) {
     Cat cat;
-    if (!isDogId(petCode))
+    if (isDogId(petCode))
       return cat;
+
     string info = readingFile(petCode);
     if (info == invalid)
       return cat;
+
     string code, status, name, breed, age, price, fur;
     stringstream ss(info);
     getline(ss, code, '|');
@@ -155,6 +163,118 @@ public:
     getline(ss, fur, '|');
     cat = Cat(code, name, breed, stoi(age), stof(price), fur);
     return cat;
+  }
+
+  LinkedList<Cat> getAllCatInfo() {
+    LinkedList<Cat> cats;
+    ifstream file(catFilePath);
+    if (!file.is_open()) {
+      cerr << "Error: Cant open file " << catFilePath << '\n';
+      return cats;
+    }
+    string line;
+    while (getline(file, line)) {
+      if (line.empty())
+        continue;
+      string code, status, name, breed, age, price, fur;
+      stringstream ss(line);
+      getline(ss, code, '|');
+      getline(ss, status, '|');
+      getline(ss, name, '|');
+      getline(ss, breed, '|');
+      getline(ss, age, '|');
+      getline(ss, price, '|');
+      getline(ss, fur, '|');
+      Cat cat(code, name, breed, stoi(age), stof(price), fur);
+      cats.pushBack(cat);
+    }
+    file.close();
+    return cats;
+  }
+
+  LinkedList<Dog> getAllDogInfo() {
+    LinkedList<Dog> dogs;
+    ifstream file(dogFilePath);
+    if (!file.is_open()) {
+      cerr << "Error: Cant open file " << dogFilePath << '\n';
+      return dogs;
+    }
+    string line;
+    while (getline(file, line)) {
+      if (line.empty())
+        continue;
+      string code, status, name, breed, age, price, energy;
+      stringstream ss(line);
+      getline(ss, code, '|');
+      getline(ss, status, '|');
+      getline(ss, name, '|');
+      getline(ss, breed, '|');
+      getline(ss, age, '|');
+      getline(ss, price, '|');
+      getline(ss, energy, '|');
+      Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+      dogs.pushBack(dog);
+    }
+    file.close();
+    return dogs;
+  }
+
+  LinkedList<Cat> getAllCatInfoAvailable() {
+    LinkedList<Cat> cats;
+    ifstream file(catFilePath);
+    if (!file.is_open()) {
+      cerr << "Error: Cant open file " << catFilePath << '\n';
+      return cats;
+    }
+    string line;
+    while (getline(file, line)) {
+      if (line.empty())
+        continue;
+      string code, status, name, breed, age, price, fur;
+      stringstream ss(line);
+      getline(ss, code, '|');
+      getline(ss, status, '|');
+      getline(ss, name, '|');
+      getline(ss, breed, '|');
+      getline(ss, age, '|');
+      getline(ss, price, '|');
+      getline(ss, fur, '|');
+      if (status == "1") {
+        Cat cat(code, name, breed, stoi(age), stof(price), fur);
+        cats.pushBack(cat);
+      }
+    }
+    file.close();
+    return cats;
+  }
+
+  LinkedList<Dog> getAllDogInfoAvailable() {
+    LinkedList<Dog> dogs;
+    ifstream file(dogFilePath);
+    if (!file.is_open()) {
+      cerr << "Error: Cant open file " << dogFilePath << '\n';
+      return dogs;
+    }
+    string line;
+    while (getline(file, line)) {
+      if (line.empty())
+        continue;
+      if (line.length() > 6 && line[6] == '1') { // available pet
+        string code, status, name, breed, age, price, energy;
+        stringstream ss(line);
+        getline(ss, code, '|');
+        getline(ss, status, '|');
+        getline(ss, name, '|');
+        getline(ss, breed, '|');
+        getline(ss, age, '|');
+        getline(ss, price, '|');
+        getline(ss, energy, '|');
+        Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+        dogs.pushBack(dog);
+      }
+    }
+    file.close();
+    return dogs;
   }
 
   // SET
@@ -175,20 +295,50 @@ public:
 
   void setStatusUnavailable(const string &petCode) {
     string info = readingFile(petCode);
-    info[5] = '0';
-    writingFile(petCode, info);
-  } // use when pet is bought
+    if (info == invalid)
+      return;
+
+    stringstream ss(info);
+    string code, status, rest;
+    getline(ss, code, '|');
+    getline(ss, status, '|');
+    getline(ss, rest);
+
+    if (status == "1") {
+      string newLine = code + "|0|" + rest;
+      writingFile(petCode, newLine);
+    }
+  }
 
   void setStatusAvailable(const string &petCode) {
     string info = readingFile(petCode);
-    info[5] = '1';
-    writingFile(petCode, info);
-  } // use when pet is restored
+    if (info == invalid)
+      return;
+
+    stringstream ss(info);
+    string code, status, rest;
+    getline(ss, code, '|');
+    getline(ss, status, '|');
+    getline(ss, rest);
+
+    if (status == "0") {
+      string newLine = code + "|1|" + rest;
+      writingFile(petCode, newLine);
+    }
+  }
+  // use when pet is restored
 
   // OTHERS
   bool isAvailablePet(const string &petCode) {
     string info = readingFile(petCode);
-    return (info[5] == '1' ? true : false);
+    if (info == invalid)
+      return false;
+
+    string code, status;
+    stringstream ss(info);
+    getline(ss, code, '|');
+    getline(ss, status, '|');
+    return (status == "1");
   }
 
   bool isValidPetId(const string &petCode) {
@@ -235,7 +385,6 @@ public:
       remove(path.c_str());
       rename(tempPath.c_str(), path.c_str());
     } else {
-      // Nếu không tìm thấy, không cần làm gì, chỉ cần xóa file temp
       remove(tempPath.c_str());
     }
   }
