@@ -1,4 +1,4 @@
-/* AdminController.hpp - Logic xử lý cho Admin */
+/* AdminController.hpp - Logic xử lý cho Admin (Updated) */
 
 #pragma once
 #include "app/Menu.hpp"
@@ -9,7 +9,10 @@
 #include "domain/entities/Staff.hpp"
 #include "domain/services/SpaService.hpp"
 #include "infra/repositories/AccountRepoFile.hpp"
+#include "infra/repositories/BillRepoFile.hpp"
+#include "infra/repositories/BookingRepoFile.hpp"
 #include "infra/repositories/PetRepoFile.hpp"
+#include "infra/repositories/ServiceRepoFile.hpp"
 #include <iostream>
 
 using namespace std;
@@ -20,6 +23,9 @@ private:
   AccountRepository accountRepo;
   PetRepository petRepo;
   SpaService spaService;
+  BillRepository billRepo;
+  BookingRepository bookingRepo;
+  ServiceRepository serviceRepo;
 
   // ===== ACCOUNT MANAGEMENT =====
   void manageAccounts() {
@@ -558,8 +564,137 @@ private:
   // ===== STATISTICS =====
   void viewStatistics() {
     Menu::displayHeader("SYSTEM STATISTICS");
+
+    // 1. Spa Statistics
+    cout << "\n========== SPA SERVICES ==========\n";
     spaService.showStatistics();
-    // TODO: Add more statistics (accounts, pets, etc.)
+
+    // 2. Pet Sales Statistics
+    cout << "\n========== PET SALES ==========\n";
+    calculatePetSalesStats();
+
+    // 3. Revenue Statistics
+    cout << "\n========== REVENUE STATISTICS ==========\n";
+    calculateRevenueStats();
+
+    cout << "\n========================================\n";
+  }
+
+  void calculatePetSalesStats() {
+    int totalDogs = 0, soldDogs = 0, availableDogs = 0;
+    int totalCats = 0, soldCats = 0, availableCats = 0;
+
+    // Count Dogs
+    ifstream dogFile("../data/Dog.txt");
+    if (dogFile.is_open()) {
+      string line;
+      while (getline(dogFile, line)) {
+        if (line.empty())
+          continue;
+        totalDogs++;
+        if (line[6] == '0')
+          soldDogs++;
+        else
+          availableDogs++;
+      }
+      dogFile.close();
+    }
+
+    // Count Cats
+    ifstream catFile("../data/Cat.txt");
+    if (catFile.is_open()) {
+      string line;
+      while (getline(catFile, line)) {
+        if (line.empty())
+          continue;
+        totalCats++;
+        if (line[6] == '0')
+          soldCats++;
+        else
+          availableCats++;
+      }
+      catFile.close();
+    }
+
+    cout << "Dogs:\n";
+    cout << "  Total: " << totalDogs << "\n";
+    cout << "  Sold: " << soldDogs << "\n";
+    cout << "  Available: " << availableDogs << "\n\n";
+
+    cout << "Cats:\n";
+    cout << "  Total: " << totalCats << "\n";
+    cout << "  Sold: " << soldCats << "\n";
+    cout << "  Available: " << availableCats << "\n\n";
+
+    cout << "Total Pets Sold: " << (soldDogs + soldCats) << "\n";
+  }
+
+  void calculateRevenueStats() {
+    // Calculate Spa Revenue from completed bookings
+    float spaRevenue = 0;
+    LinkedList<Booking> allBookings = bookingRepo.getAllBookings();
+    Node<Booking> *current = allBookings.getHead();
+
+    while (current != nullptr) {
+      if (current->getData().getStatus() == "Completed") {
+        string serviceId = current->getData().getServiceId();
+        float price = serviceRepo.getServicePrice(serviceId);
+        spaRevenue += price;
+      }
+      current = current->getNext();
+    }
+
+    // Calculate Pet Sales Revenue (from sold pets)
+    float petRevenue = 0;
+
+    // Dogs
+    ifstream dogFile("../data/Dog.txt");
+    if (dogFile.is_open()) {
+      string line;
+      while (getline(dogFile, line)) {
+        if (line.empty())
+          continue;
+        if (line[6] == '0') { // Sold
+          stringstream ss(line);
+          string id, status, name, breed, age, price, energy;
+          getline(ss, id, '|');
+          getline(ss, status, '|');
+          getline(ss, name, '|');
+          getline(ss, breed, '|');
+          getline(ss, age, '|');
+          getline(ss, price, '|');
+          petRevenue += stof(price);
+        }
+      }
+      dogFile.close();
+    }
+
+    // Cats
+    ifstream catFile("../data/Cat.txt");
+    if (catFile.is_open()) {
+      string line;
+      while (getline(catFile, line)) {
+        if (line.empty())
+          continue;
+        stringstream ss(line);
+        string id, name, breed, age, price, fur;
+        getline(ss, id, '|');
+        getline(ss, name, '|');
+        getline(ss, breed, '|');
+        getline(ss, age, '|');
+        getline(ss, price, '|');
+        petRevenue += stof(price);
+      }
+      catFile.close();
+    }
+
+    float totalRevenue = spaRevenue + petRevenue;
+
+    cout << "Spa Service Revenue: " << fixed << setprecision(0) << spaRevenue
+         << " VND\n";
+    cout << "Pet Sales Revenue: " << petRevenue << " VND\n";
+    cout << "----------------------------------------\n";
+    cout << "Total Revenue: " << totalRevenue << " VND\n";
   }
 
 public:
