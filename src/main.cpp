@@ -1,5 +1,3 @@
-/* main.cpp - Entry point của ứng dụng PetShop */
-
 #include "app/App.hpp"
 #include <iostream>
 
