@@ -55,8 +55,7 @@ public:
       cin >> pw;
       cout << "1. Male\n2. Female\nEnter your gender: ";
       cin >> gender;
-      gender = (gender == "1") ? "male"
-                               : "female"; // rcm chuyển thành ấn nút trong QT
+      gender = (gender == "1") ? "male" : "female";
       cout << "Enter your address: ";
       cin >> street;
       cout << "Enter your city: ";

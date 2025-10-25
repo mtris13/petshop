@@ -7,6 +7,7 @@
 #include "infra/repositories/AccountRepoFile.hpp"
 #include "infra/repositories/PetRepoFile.hpp"
 #include <ctime>
+#include <iomanip>
 #include <iostream>
 
 using namespace std;
@@ -19,6 +20,8 @@ private:
   AccountRepository accountRepo;
 
   void viewPets() {
+    system("cls");
+
     Menu::displayHeader("PETS AVAILABLE");
 
     cout << "\n1. View Dogs\n";
@@ -38,6 +41,8 @@ private:
   }
 
   void displayDogs() {
+    system("cls");
+
     Menu::displayHeader("ALL DOGS");
 
     ifstream file("../data/Dog.txt");
@@ -46,12 +51,15 @@ private:
       return;
     }
 
-    cout << "\nID    | Status | Name       | Breed              | Age | Price  "
-            "    | Energy\n";
-    cout << "-----------------------------------------------------------"
-            "-------------------\n";
+    cout << "\n========== DOG LIST ==========\n";
+    cout << left << setw(6) << "ID" << setw(12) << "Status" << setw(15)
+         << "Name" << setw(20) << "Breed" << right << setw(6) << "Age"
+         << setw(14) << "Price" << setw(10) << "Energy"
+         << "\n";
+    cout << string(83, '-') << "\n";
 
     string line;
+    int count = 0;
     while (getline(file, line)) {
       if (line.empty())
         continue;
@@ -69,14 +77,21 @@ private:
 
       string statusText = (status == "1") ? "Available" : "Sold";
 
-      cout << id << " | " << statusText << " | " << name << " | " << breed
-           << " | " << age << " | " << price << " | " << energy << "/10\n";
+      cout << left << setw(6) << id << setw(12) << statusText << setw(15)
+           << name << setw(20) << breed << right << setw(6) << age << setw(14)
+           << fixed << setprecision(0) << stof(price) << setw(7) << energy
+           << "/10\n";
+      count++;
     }
+    cout << string(83, '-') << "\n";
+    cout << "Total Dogs: " << count << "\n";
 
     file.close();
   }
 
   void displayCats() {
+    system("cls");
+
     Menu::displayHeader("ALL CATS");
 
     ifstream file("../data/Cat.txt");
@@ -85,29 +100,41 @@ private:
       return;
     }
 
-    cout << "\nID    | Name   | Breed              | Age | Price      | Fur "
-            "Length\n";
-    cout << "------------------------------------------------------------"
-            "-------------------\n";
+    cout << "\n========== CAT LIST ==========\n";
+    cout << left << setw(6) << "ID" << setw(12) << "Status" << setw(15)
+         << "Name" << setw(20) << "Breed" << right << setw(6) << "Age"
+         << setw(14) << "Price" << setw(10) << left << "      Fur Length"
+         << "\n";
+    cout << string(89, '-') << "\n";
 
     string line;
+    int count = 0;
     while (getline(file, line)) {
       if (line.empty())
         continue;
 
       stringstream ss(line);
-      string id, name, breed, age, price, fur;
+      string id, status, name, breed, age, price, fur;
 
       getline(ss, id, '|');
+      getline(ss, status, '|');
       getline(ss, name, '|');
       getline(ss, breed, '|');
       getline(ss, age, '|');
       getline(ss, price, '|');
       getline(ss, fur, '|');
 
-      cout << id << " | " << name << " | " << breed << " | " << age << " | "
-           << price << " | " << fur << "\n";
+      string statusText = (status == "1") ? "Available" : "Sold";
+
+      cout << left << setw(6) << id << setw(12) << statusText << setw(15)
+           << name << setw(20) << breed << right << setw(6) << age << setw(14)
+           << fixed << setprecision(0) << stof(price) << setw(10) << left << ""
+           << fur << "\n";
+      count++;
     }
+
+    cout << string(89, '-') << "\n";
+    cout << "Total Cats: " << count << "\n";
 
     file.close();
   }
@@ -157,6 +184,8 @@ private:
   }
 
   void confirmBooking() {
+    system("cls");
+    spaService.viewAllBookings();
     string bookingId;
     cout << "Enter Booking ID to confirm: ";
     cin >> bookingId;
@@ -164,6 +193,8 @@ private:
   }
 
   void completeBooking() {
+    system("cls");
+    spaService.viewAllBookings();
     string bookingId;
     cout << "Enter Booking ID to complete: ";
     cin >> bookingId;
@@ -171,6 +202,8 @@ private:
   }
 
   void viewTodaySchedule() {
+    system("cls");
+
     Menu::displayHeader("TODAY'S SCHEDULE");
 
     // Get current date
@@ -185,6 +218,8 @@ private:
   }
 
   void createClientAccount() {
+    system("cls");
+
     Menu::displayHeader("CREATE CLIENT ACCOUNT");
 
     string id, name, password, gender, street, city;

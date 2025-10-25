@@ -143,29 +143,36 @@ public:
     return total;
   }
 
-  // Hiển thị giỏ hàng
+// Hiển thị giỏ hàng
+#include <iomanip> // cần cho setw, left, right, setprecision
+
   void displayCart(const string &clientId) {
     vector<CartItem> items = getCartItems(clientId);
 
     if (items.empty()) {
-      cout << "\nGio hang cua ban dang trong!\n";
+      cout << "\nGio hang trong!\n";
       return;
     }
 
-    cout << "\n========== GIO HANG CUA BAN ==========\n";
-    cout << "STT | ID Pet | Ten Pet              | Gia\n";
-    cout << "---------------------------------------\n";
+    Menu::displayHeader("GIO HANG CUA BAN");
+
+    cout << left << setw(5) << "STT" << setw(10) << "ID Pet" << setw(25)
+         << "Ten Pet" << right << setw(15) << "Gia (VND)"
+         << "\n";
+    cout << string(55, '-') << "\n";
 
     int stt = 1;
     float total = 0;
     for (const auto &item : items) {
-      cout << stt++ << ".  | " << item.petId << " | " << item.petName << " | "
-           << item.price << " VND\n";
+      cout << left << setw(5) << stt++ << setw(10) << item.petId << setw(25)
+           << item.petName << right << setw(15) << fixed << setprecision(0)
+           << item.price << "\n";
       total += item.price;
     }
 
-    cout << "---------------------------------------\n";
-    cout << "Tong cong: " << total << " VND\n";
-    cout << "=======================================\n";
+    cout << string(55, '-') << "\n";
+    cout << right << setw(45) << "Tong cong: " << setw(10) << fixed
+         << setprecision(0) << total << " VND\n";
+    cout << string(55, '=') << "\n";
   }
 };
