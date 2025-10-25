@@ -9,7 +9,7 @@
 #include "infra/repositories/BillRepoFile.hpp"
 #include "infra/repositories/CartRepoFile.hpp"
 #include "infra/repositories/PetRepoFile.hpp"
-
+#include <iomanip>
 #include <iostream>
 
 using namespace std;
@@ -23,8 +23,8 @@ private:
   BillRepository billRepo;
 
   void viewPetsForSale() {
+    system("cls");
     Menu::displayHeader("PETS FOR SALE");
-
     cout << "\n1. View Dogs\n";
     cout << "2. View Cats\n";
     cout << "0. Back\n";
@@ -39,6 +39,37 @@ private:
     } else if (choice == 2) {
       displayCatsForSale();
     }
+    Menu::displayHeader("ADD PET TO CART");
+    string petId;
+    cout << "Enter Pet ID (or '0' to cancel): ";
+    cin >> petId;
+    cin.ignore();
+
+    if (petId == "0")
+      return;
+
+    if (!petRepo.isValidPetId(petId)) {
+      Menu::displayError("Invalid Pet ID!");
+      return;
+    }
+
+    if (!petRepo.isAvailablePet(petId)) {
+      Menu::displayError("This pet is not available!");
+      return;
+    }
+
+    // Lấy thông tin pet
+    if (petId[0] == 'd') {
+      Dog dog = petRepo.getDogInfo(petId);
+      cartRepo.addToCart(currentClient->getId(), dog.getId(), dog.getName(),
+                         dog.getPrice());
+      Menu::displaySuccess("Dog added to cart successfully!");
+    } else {
+      Cat cat = petRepo.getCatInfo(petId);
+      cartRepo.addToCart(currentClient->getId(), cat.getId(), cat.getName(),
+                         cat.getPrice());
+      Menu::displaySuccess("Cat added to cart successfully!");
+    }
   }
 
   void displayDogsForSale() {
@@ -50,19 +81,21 @@ private:
       return;
     }
 
-    cout << "\nID    | Name       | Breed              | Age | Price      | "
-            "Energy | Status\n";
-    cout << "-----------------------------------------------------------"
-            "-------------------\n";
+    cout << "\n========== DOGS FOR SALE ==========\n";
+    cout << left << setw(6) << "ID" << setw(15) << "Name" << setw(20) << "Breed"
+         << right << setw(6) << "Age" << setw(14) << "Price" << setw(10)
+         << "Energy" << setw(12) << "Status"
+         << "\n";
+    cout << string(83, '-') << "\n";
 
     string line;
+    int count = 0;
     while (getline(file, line)) {
       if (line.empty())
         continue;
 
       stringstream ss(line);
       string id, status, name, breed, age, price, energy;
-
       getline(ss, id, '|');
       getline(ss, status, '|');
       getline(ss, name, '|');
@@ -73,13 +106,16 @@ private:
 
       string statusText = (status == "1") ? "Available" : "Sold";
 
-      cout << id << " | " << name << " | " << breed << " | " << age << " | "
-           << price << " | " << energy << "/10 | " << statusText << "\n";
+      cout << left << setw(6) << id << setw(15) << name << setw(20) << breed
+           << right << setw(6) << age << setw(14) << fixed << setprecision(0)
+           << stof(price) << setw(7) << energy << "/10" << setw(12)
+           << statusText << "\n";
+
+      count++;
     }
 
+    cout << string(83, '-') << "\n";
     file.close();
-
-    cout << "\n[TIP] Use 'Add to Cart' option from main menu to purchase\n";
   }
 
   void displayCatsForSale() {
@@ -91,33 +127,41 @@ private:
       return;
     }
 
-    cout << "\nID    | Name   | Breed              | Age | Price      | Fur "
-            "Length | Status\n";
-    cout << "------------------------------------------------------------"
-            "-------------------\n";
+    cout << "\n========== CATS FOR SALE ==========\n";
+    cout << left << setw(6) << "ID" << setw(15) << "Name" << setw(20) << "Breed"
+         << right << setw(6) << "Age" << setw(14) << "Price" << setw(15) << left
+         << "        Fur Length" << right << setw(12) << "Status"
+         << "\n";
+    cout << string(93, '-') << "\n";
 
     string line;
+    int count = 0;
     while (getline(file, line)) {
       if (line.empty())
         continue;
 
       stringstream ss(line);
-      string id, name, breed, age, price, fur;
-
+      string id, status, name, breed, age, price, fur;
       getline(ss, id, '|');
+      getline(ss, status, '|');
       getline(ss, name, '|');
       getline(ss, breed, '|');
       getline(ss, age, '|');
       getline(ss, price, '|');
       getline(ss, fur, '|');
 
-      cout << id << " | " << name << " | " << breed << " | " << age << " | "
-           << price << " | " << fur << " | Available\n";
+      string statusText = (status == "1") ? "Available" : "Sold";
+
+      cout << left << setw(6) << id << setw(15) << name << setw(20) << breed
+           << right << setw(6) << age << setw(14) << fixed << setprecision(0)
+           << stof(price) << setw(12) << left << "" << fur << right << setw(15)
+           << statusText << "\n";
+
+      count++;
     }
 
+    cout << string(93, '-') << "\n";
     file.close();
-
-    cout << "\n[TIP] Use 'Add to Cart' option from main menu to purchase\n";
   }
 
   void addToCart() {
@@ -156,9 +200,9 @@ private:
   }
 
   void viewCart() {
+    system("cls");
     Menu::displayHeader("MY CART");
     cartRepo.displayCart(currentClient->getId());
-
     if (!cartRepo.isCartEmpty(currentClient->getId())) {
       cout << "\n1. Checkout\n";
       cout << "2. Remove Item\n";
@@ -196,6 +240,7 @@ private:
       Menu::displayError("Cart is empty!");
       return;
     }
+    system("cls");
 
     // Hiển thị giỏ hàng
     cartRepo.displayCart(currentClient->getId());
@@ -226,13 +271,13 @@ private:
 
     // Lưu hóa đơn
     billRepo.saveBill(bill);
+    system("cls");
 
     // Hiển thị hóa đơn
     bill.display();
 
     // Xóa giỏ hàng
     cartRepo.clearCart(currentClient->getId());
-
     Menu::displaySuccess("Purchase completed successfully!");
     cout << "Bill ID: " << bill.getBillId() << "\n";
   }
@@ -243,6 +288,7 @@ private:
   }
 
   void bookSpaService() {
+    system("cls");
     Menu::displayHeader("BOOK SPA SERVICE");
 
     // Show available services first
@@ -251,16 +297,16 @@ private:
     cout << "\n";
     string serviceId, date, time;
 
-    cout << "Enter Service ID: ";
+    cout << "Enter Service ID (or '0' to cancel): ";
     cin >> serviceId;
-
+    if (serviceId == "0")
+      return;
     cout << "Enter Date (dd/mm/yyyy): ";
     cin >> date;
 
     cout << "Enter Time (hh:mm): ";
     cin >> time;
 
-    // Không cần nhập Pet ID nữa - khách đem pet của mình đến
     spaService.createBooking(currentClient->getId(), "CUSTOMER_PET", serviceId,
                              date, time);
   }
@@ -272,6 +318,7 @@ private:
   }
 
   void cancelMyBooking() {
+    system("cls");
     Menu::displayHeader("CANCEL BOOKING");
 
     // Show my bookings first
@@ -286,6 +333,8 @@ private:
   }
 
   void viewMyProfile() {
+    system("cls");
+
     Menu::displayHeader("MY PROFILE");
 
     cout << "\n=== CLIENT INFORMATION ===\n";
@@ -361,13 +410,13 @@ public:
       cout << "  CLIENT PANEL - " << currentClient->getName() << "\n";
       cout << "========================================\n";
       cout << "1. View Pets for Sale\n";
-      cout << "2. Add Pet to Cart\n";
-      cout << "3. View My Cart\n";
-      cout << "4. View Spa Services\n";
-      cout << "5. Book Spa Service\n";
-      cout << "6. My Bookings\n";
-      cout << "7. Cancel Booking\n";
-      cout << "8. My Profile\n";
+      // cout << "2. Add Pet to Cart\n";
+      cout << "2. View My Cart\n";
+      // cout << "3. View Spa Services\n";
+      cout << "3. Book Spa Service\n";
+      cout << "4. My Bookings\n";
+      cout << "5. Cancel Booking\n";
+      cout << "6. My Profile\n";
       cout << "0. Logout\n";
       cout << "========================================\n";
       cout << "Enter your choice: ";
@@ -379,31 +428,31 @@ public:
         viewPetsForSale();
         Menu::pause();
         break;
+      // case 2:
+      //   addToCart();
+      //   Menu::pause();
+      //   break;
       case 2:
-        addToCart();
-        Menu::pause();
-        break;
-      case 3:
         viewCart();
         Menu::pause();
         break;
-      case 4:
-        viewSpaServices();
-        Menu::pause();
-        break;
-      case 5:
+      // case 3:
+      //   viewSpaServices();
+      //   Menu::pause();
+      //   break;
+      case 3:
         bookSpaService();
         Menu::pause();
         break;
-      case 6:
+      case 4:
         viewMyBookings();
         Menu::pause();
         break;
-      case 7:
+      case 5:
         cancelMyBooking();
         Menu::pause();
         break;
-      case 8:
+      case 6:
         viewMyProfile();
         Menu::pause();
         break;

@@ -46,20 +46,19 @@ private:
   void displayBookingTableHeader() {
     cout << "\n";
     cout << setw(8) << left << "ID" << setw(13) << left << "Client ID"
-         << setw(8) << left << "Pet ID" << setw(8) << left << "Spa ID"
-         << setw(12) << left << "Date" << setw(8) << left << "Time" << setw(12)
-         << left << "Status"
+         << setw(8) << left << "Spa ID" << setw(12) << left << "Date" << setw(8)
+         << left << "Time" << setw(12) << left << "Status"
          << "\n";
-    cout << string(69, '-') << "\n";
+    cout << string(61, '-') << "\n";
   }
 
   // Helper: hiển thị một dòng booking
   void displayBookingRow(const Booking &booking) {
     cout << setw(8) << left << booking.getBookingId() << setw(13) << left
-         << booking.getClientId() << setw(8) << left << booking.getPetId()
-         << setw(8) << left << booking.getServiceId() << setw(12) << left
-         << booking.getDate() << setw(8) << left << booking.getTime()
-         << setw(12) << left << booking.getStatus() << "\n";
+         << booking.getClientId() << setw(8) << left << booking.getServiceId()
+         << setw(12) << left << booking.getDate() << setw(8) << left
+         << booking.getTime() << setw(12) << left << booking.getStatus()
+         << "\n";
   }
 
 public:
@@ -209,6 +208,7 @@ public:
       displayBookingRow(current->getData());
       current = current->getNext();
     }
+
     cout << "\nTotal: " << bookings.getSize() << " bookings\n";
     cout << "=====================================\n";
   }
