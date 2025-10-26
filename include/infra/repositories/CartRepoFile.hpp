@@ -9,10 +9,10 @@
 */
 
 #pragma once
-#include <PetRepoFile.hpp>
+#include "PetRepoFile.hpp"
+#include "domain/entities/Cart.hpp"
+#include "ds/LinkedList.hpp"
 #include <fstream>
-#include <include/domain/entities/Cart.hpp>
-#include <include/ds/LinkedList.hpp>
 #include <iomanip> // cần cho setw, left, right, setprecision
 #include <iostream>
 #include <sstream>
@@ -67,7 +67,7 @@ public:
             getline(ss, name, '|');
             getline(ss, priceStr, '|');
 
-            items.pushBack(CartItem(id, name, stof(priceStr)));
+            items.pushBack(CartItem(id, name, priceStr));
         }
 
         file.close();
@@ -133,7 +133,7 @@ public:
         float total = 0;
         Node<CartItem> *current = items.getHead();
         while (current != nullptr) {
-            total += current->getData().getPrice();
+            total += stof(current->getData().getPrice());
             current = current->getNext();
         }
         return total;
@@ -162,7 +162,7 @@ public:
             if (petRepo.isAvailablePet(petId)) {
                 cout << left << setw(5) << stt++ << setw(10) << petId << setw(25) << current->getData().getPetName() << right << setw(15) << fixed << setprecision(0)
                      << current->getData().getPrice() << "\n";
-                total += current->getData().getPrice();
+                total += stof(current->getData().getPrice());
             }
             current = current->getNext();
         }

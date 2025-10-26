@@ -6,7 +6,7 @@
 
 #pragma once
 #include "domain/entities/Bill.hpp"
-#include "include/ds/LinkedList.hpp"
+#include "ds/LinkedList.hpp"
 #include <ctime>
 #include <fstream>
 #include <iomanip>
@@ -16,14 +16,14 @@ using namespace std;
 
 class BillRepository {
 private:
-    const string billFolderPath = "../data/bills/";
+    const std::string billFolderPath = "../data/bills/";
 
     // Lấy ngày giờ hiện tại
-    string getCurrentDateTime(bool dateOnly = false) {
+    std::string getCurrentDateTime(bool dateOnly = false) {
         time_t now = time(0);
         tm *ltm = localtime(&now);
 
-        stringstream ss;
+        std::stringstream ss;
         ss << setfill('0') << setw(2) << ltm->tm_mday << "/" << setw(2)
            << (1 + ltm->tm_mon) << "/" << (1900 + ltm->tm_year);
 
@@ -38,7 +38,7 @@ public:
     BillRepository() {}
 
     // Tạo bill ID tự động
-    string generateBillId() {
+    std::string generateBillId() {
         int maxNum = 0;
 
         // Đọc tất cả files trong folder bills để tìm số lớn nhất
@@ -57,14 +57,14 @@ public:
         saveFile.close();
 
         // Tạo ID
-        stringstream ss;
+        std::stringstream ss;
         ss << "BILL" << setfill('0') << setw(3) << maxNum;
         return ss.str();
     }
 
     // Lưu hóa đơn vào file
     void saveBill(const Bill &bill) {
-        string filePath = billFolderPath + bill.getBillId() + ".txt";
+        std::string filePath = billFolderPath + bill.getBillId() + ".txt";
         ofstream file(filePath);
 
         if (!file.is_open()) {
@@ -88,14 +88,16 @@ public:
 
         // Items
         int stt = 1;
-        for (const auto &item : bill.getItems()) {
-            file << stt++ << ". " << item.itemName << " (" << item.itemType << ")\n";
-            file << "   ID: " << item.itemId << "\n";
-            file << "   Gia: " << fixed << setprecision(0) << item.price << " VND\n";
-            if (item.quantity > 1) {
-                file << "   So luong: " << item.quantity << "\n";
-            }
+        Node<BillItem> *item = bill.getItems().getHead();
+        while (item != nullptr) {
+            file << stt++ << ". " << item->getData().getItemName() << " (" << item->getData().getItemType() << ")\n";
+            file << "   ID: " << item->getData().getItemId() << "\n";
+            file << "   Gia: " << fixed << setprecision(0) << item->getData().getPrice() << " VND\n";
+            // if (item.quantity > 1) {
+            //     file << "   So luong: " << item.quantity << "\n";
+            // }
             file << "\n";
+            item = item->getNext();
         }
 
         // Footer
@@ -108,19 +110,19 @@ public:
         file << "========================================\n";
 
         file.close();
-        cout << "\n[SUCCESS] Hoa don da duoc luu tai: " << filePath << "\n";
+        std::cout << "\n[SUCCESS] Hoa don da duoc luu tai: " << filePath << "\n";
     }
 
     // Tạo hóa đơn từ giỏ hàng
-    Bill createBillFromCart(const string &clientId, const string &clientName,
+    Bill createBillFromCart(const std::string &clientId, const std::string &clientName,
                             const LinkedList<BillItem> &items) {
-        string billId = generateBillId();
-        string dateTime = getCurrentDateTime();
+        std::string billId = generateBillId();
+        std::string dateTime = getCurrentDateTime();
 
         // Tách date và time
         size_t spacePos = dateTime.find(' ');
-        string date = dateTime.substr(0, spacePos);
-        string time = dateTime.substr(spacePos + 1);
+        std::string date = dateTime.substr(0, spacePos);
+        std::string time = dateTime.substr(spacePos + 1);
 
         Bill bill(billId, clientId, clientName, date, time);
 
@@ -135,9 +137,9 @@ public:
     }
 
     // Đọc hóa đơn từ file
-    Bill loadBill(const string &billId) {
+    Bill loadBill(const std::string &billId) {
         Bill bill;
-        string filePath = billFolderPath + billId + ".txt";
+        std::string filePath = billFolderPath + billId + ".txt";
         ifstream file(filePath);
 
         if (!file.is_open()) {
@@ -152,8 +154,8 @@ public:
     }
 
     // Lấy danh sách tất cả bills
-    LinkedList<string> getAllBillIds() {
-        LinkedList<string> billIds;
+    LinkedList<std::string> getAllBillIds() {
+        LinkedList<std::string> billIds;
         // Cần implement directory listing
         // Đơn giản hóa: đọc từ counter
         return billIds;
