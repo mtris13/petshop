@@ -1,4 +1,4 @@
-c001|1|Golden|British Shorthair|3|8000000|Short
+c001|0|Golden|British Shorthair|3|8000000|Short
 c002|1|Cattie|Birman|4|9200000|Long
 c003|1|Luna|Persian|2|10500000|Long
 c004|1|Milo|Siamese|1|7500000|Short
