@@ -177,7 +177,7 @@ Staff AccountRepository::getStaffInfo(const string &loginCode) {
     getline(ss, pw, '|');
     getline(ss, gender, '|');
     getline(ss, salary, '|');
-    info = Staff(code, username, pw, gender, stof(salary));
+    info = Staff(code, username, pw, gender, stol(salary));
     return info;
 }
 

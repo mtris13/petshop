@@ -9,11 +9,11 @@ protected:
     string name;
     string breed;
     int age;
-    float price;
+    long price;
 
 public:
     Pet() {}
-    Pet(string id, const string &name, const string &breed, int age, float price)
+    Pet(string id, const string &name, const string &breed, int age, long price)
         : id(id), name(name), breed(breed), age(age), price(price) {}
 
     virtual ~Pet() = default;
@@ -23,13 +23,13 @@ public:
     string getName() const { return name; }
     string getBreed() const { return breed; }
     int getAge() const { return age; }
-    float getPrice() const { return price; }
+    long getPrice() const { return price; }
 
     // Setter
     void setName(const string &newName) { name = newName; }
     void setBreed(const string &newBreed) { breed = newBreed; }
     void setAge(int newAge) { age = newAge; }
-    void setPrice(float newPrice) { price = newPrice; }
+    void setPrice(long newPrice) { price = newPrice; }
 
     // Phương thức ảo để biết loại thú
     virtual std::string getType() const = 0;

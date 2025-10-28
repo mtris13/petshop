@@ -10,7 +10,7 @@ private:
     std::string clientId;       // ID khách hàng
     std::string clientName;     // Tên khách hàng
     LinkedList<BillItem> items; // Danh sách sản phẩm/dịch vụ
-    std::string totalAmount;    // Tổng tiền
+    long totalAmount;           // Tổng tiền
     std::string date;           // Ngày tạo hóa đơn
     std::string time;           // Giờ tạo hóa đơn
 
@@ -25,7 +25,7 @@ public:
     std::string getClientId() const { return clientId; }
     std::string getClientName() const { return clientName; }
     const LinkedList<BillItem> &getItems() const { return items; }
-    std::string getTotalAmount() const { return totalAmount; }
+    long getTotalAmount() const { return totalAmount; }
     std::string getDate() const { return date; }
     std::string getTime() const { return time; }
 
@@ -44,13 +44,13 @@ public:
 
     // Tính lại tổng tiền
     void recalculateTotal() {
-        float total = 0;
+        long total = 0;
         Node<BillItem> *item = items.getHead();
         while (item != nullptr) {
-            total += stof(item->getData().getPrice());
+            total += item->getData().getPrice();
             item = item->getNext();
         }
-        totalAmount = std::to_string(total);
+        totalAmount = total;
     }
 
     // Hiển thị hóa đơn
