@@ -1,4 +1,4 @@
-/* PetRepoFile.hpp - đọc và ghi các file Pet (COMPLETED) */
+/* PetRepoFile.hpp - đọc và ghi các file Pet (UPDATED) */
 
 #pragma once
 #include "domain/entities/Cat.hpp"
@@ -107,6 +107,14 @@ private:
     return false;
   }
 
+  // --- THÊM HÀM HELPER ĐỂ XÓA DẤU NGOẶC KÉP ---
+  string trimQuotes(string s) {
+    if (s.length() >= 2 && s.front() == '"' && s.back() == '"') {
+      return s.substr(1, s.length() - 2);
+    }
+    return s;
+  }
+
 public:
   // GET
   string getPetStatus(const string &petCode) {
@@ -130,7 +138,9 @@ public:
     string info = readingFile(petCode);
     if (info == invalid)
       return dog;
-    string code, status, name, breed, age, price, energy;
+
+    // --- SỬA ĐỔI: Thêm description ---
+    string code, status, name, breed, age, price, energy, description;
     stringstream ss(info);
     getline(ss, code, '|');
     getline(ss, status, '|');
@@ -139,7 +149,12 @@ public:
     getline(ss, age, '|');
     getline(ss, price, '|');
     getline(ss, energy, '|');
-    dog = Dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+    getline(ss, description); // Đọc phần còn lại của dòng
+
+    description = trimQuotes(description); // Xóa dấu ngoặc kép
+
+    dog = Dog(code, name, breed, stoi(age), stof(price), stoi(energy),
+              description);
     return dog;
   }
 
@@ -152,7 +167,8 @@ public:
     if (info == invalid)
       return cat;
 
-    string code, status, name, breed, age, price, fur;
+    // --- SỬA ĐỔI: Thêm description ---
+    string code, status, name, breed, age, price, fur, description;
     stringstream ss(info);
     getline(ss, code, '|');
     getline(ss, status, '|');
@@ -161,7 +177,11 @@ public:
     getline(ss, age, '|');
     getline(ss, price, '|');
     getline(ss, fur, '|');
-    cat = Cat(code, name, breed, stoi(age), stof(price), fur);
+    getline(ss, description); // Đọc phần còn lại của dòng
+
+    description = trimQuotes(description); // Xóa dấu ngoặc kép
+
+    cat = Cat(code, name, breed, stoi(age), stof(price), fur, description);
     return cat;
   }
 
@@ -176,7 +196,9 @@ public:
     while (getline(file, line)) {
       if (line.empty())
         continue;
-      string code, status, name, breed, age, price, fur;
+
+      // --- SỬA ĐỔI: Thêm description ---
+      string code, status, name, breed, age, price, fur, description;
       stringstream ss(line);
       getline(ss, code, '|');
       getline(ss, status, '|');
@@ -185,7 +207,11 @@ public:
       getline(ss, age, '|');
       getline(ss, price, '|');
       getline(ss, fur, '|');
-      Cat cat(code, name, breed, stoi(age), stof(price), fur);
+      getline(ss, description); // Đọc phần còn lại
+
+      description = trimQuotes(description); // Xóa dấu ngoặc kép
+
+      Cat cat(code, name, breed, stoi(age), stof(price), fur, description);
       cats.pushBack(cat);
     }
     file.close();
@@ -203,7 +229,9 @@ public:
     while (getline(file, line)) {
       if (line.empty())
         continue;
-      string code, status, name, breed, age, price, energy;
+
+      // --- SỬA ĐỔI: Thêm description ---
+      string code, status, name, breed, age, price, energy, description;
       stringstream ss(line);
       getline(ss, code, '|');
       getline(ss, status, '|');
@@ -212,7 +240,12 @@ public:
       getline(ss, age, '|');
       getline(ss, price, '|');
       getline(ss, energy, '|');
-      Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+      getline(ss, description); // Đọc phần còn lại
+
+      description = trimQuotes(description); // Xóa dấu ngoặc kép
+
+      Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy),
+              description);
       dogs.pushBack(dog);
     }
     file.close();
@@ -230,7 +263,9 @@ public:
     while (getline(file, line)) {
       if (line.empty())
         continue;
-      string code, status, name, breed, age, price, fur;
+
+      // --- SỬA ĐỔI: Thêm description ---
+      string code, status, name, breed, age, price, fur, description;
       stringstream ss(line);
       getline(ss, code, '|');
       getline(ss, status, '|');
@@ -239,8 +274,12 @@ public:
       getline(ss, age, '|');
       getline(ss, price, '|');
       getline(ss, fur, '|');
+      getline(ss, description); // Đọc phần còn lại
+
+      description = trimQuotes(description); // Xóa dấu ngoặc kép
+
       if (status == "1") {
-        Cat cat(code, name, breed, stoi(age), stof(price), fur);
+        Cat cat(code, name, breed, stoi(age), stof(price), fur, description);
         cats.pushBack(cat);
       }
     }
@@ -259,17 +298,24 @@ public:
     while (getline(file, line)) {
       if (line.empty())
         continue;
-      if (line.length() > 6 && line[6] == '1') { // available pet
-        string code, status, name, breed, age, price, energy;
-        stringstream ss(line);
-        getline(ss, code, '|');
-        getline(ss, status, '|');
-        getline(ss, name, '|');
-        getline(ss, breed, '|');
-        getline(ss, age, '|');
-        getline(ss, price, '|');
-        getline(ss, energy, '|');
-        Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy));
+
+      // --- SỬA ĐỔI: Thêm description ---
+      string code, status, name, breed, age, price, energy, description;
+      stringstream ss(line);
+      getline(ss, code, '|');
+      getline(ss, status, '|');
+      getline(ss, name, '|');
+      getline(ss, breed, '|');
+      getline(ss, age, '|');
+      getline(ss, price, '|');
+      getline(ss, energy, '|');
+      getline(ss, description); // Đọc phần còn lại
+
+      description = trimQuotes(description); // Xóa dấu ngoặc kép
+
+      if (status == "1") {
+        Dog dog(code, name, breed, stoi(age), stof(price), stoi(energy),
+                description);
         dogs.pushBack(dog);
       }
     }
@@ -279,17 +325,20 @@ public:
 
   // SET
   void setDogInfo(const Dog &dog) {
-    string line = dog.getId() + "|1|" + dog.getName() + '|' + dog.getBreed() +
-                  '|' + to_string(dog.getAge()) + '|' +
-                  to_string(dog.getPrice()) + '|' +
-                  to_string(dog.getEnergyLevel());
+    // --- SỬA ĐỔI: Thêm description vào chuỗi, bọc trong dấu " " ---
+    string line =
+        dog.getId() + "|1|" + dog.getName() + '|' + dog.getBreed() + '|' +
+        to_string(dog.getAge()) + '|' + to_string(dog.getPrice()) + '|' +
+        to_string(dog.getEnergyLevel()) + "|\"" + dog.getDescription() + "\"";
     writingFile(dog.getId(), line);
   }
 
   void setCatInfo(const Cat &cat) {
+    // --- SỬA ĐỔI: Thêm description vào chuỗi, bọc trong dấu " " ---
     string line = cat.getId() + "|1|" + cat.getName() + '|' + cat.getBreed() +
                   '|' + to_string(cat.getAge()) + '|' +
-                  to_string(cat.getPrice()) + '|' + cat.getFurLength();
+                  to_string(cat.getPrice()) + '|' + cat.getFurLength() + "|\"" +
+                  cat.getDescription() + "\"";
     writingFile(cat.getId(), line);
   }
 
@@ -302,7 +351,7 @@ public:
     string code, status, rest;
     getline(ss, code, '|');
     getline(ss, status, '|');
-    getline(ss, rest);
+    getline(ss, rest); // 'rest' sẽ tự động chứa cả description
 
     if (status == "1") {
       string newLine = code + "|0|" + rest;
@@ -319,7 +368,7 @@ public:
     string code, status, rest;
     getline(ss, code, '|');
     getline(ss, status, '|');
-    getline(ss, rest);
+    getline(ss, rest); // 'rest' sẽ tự động chứa cả description
 
     if (status == "0") {
       string newLine = code + "|1|" + rest;
@@ -377,7 +426,6 @@ public:
       else
         out << line << '\n';
     }
-
     in.close();
     out.close();
 
