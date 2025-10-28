@@ -32,7 +32,7 @@ public:
     void setPrice(float newPrice) { price = newPrice; }
 
     // Phương thức ảo để biết loại thú
-    virtual string getType() const = 0;
+    virtual std::string getType() const = 0;
 
     virtual void showInfo(ostream &out) const {
         out << "ID: " << id << "\n"
@@ -41,10 +41,10 @@ public:
             << "Age: " << age << "\n"
             << "Price: " << price << "\n";
     }
-    friend ostream &operator<<(ostream &out, const Pet &pet);
+    friend std::ostream &operator<<(ostream &out, const Pet &pet);
 };
 
-ostream &operator<<(ostream &out, const Pet &pet) {
+inline std::ostream &operator<<(ostream &out, const Pet &pet) {
     pet.showInfo(out);
     return out;
 }
