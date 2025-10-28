@@ -25,17 +25,11 @@ private:
 
 public:
     // Ham dung
-    LinkedList() : head(nullptr), size(0), tail(head) {}
+    LinkedList() : head(nullptr), size(0), tail(nullptr) {}
     LinkedList(const T &value) : size(1), head(new Node<T>(value)), tail(head) {}
 
     // Ham huy
-    ~LinkedList() {
-        while (head != nullptr) {
-            Node<T> *temp = head;
-            head = head->getNext();
-            delete temp;
-        }
-    }
+    ~LinkedList() { clear(); }
 
     // Getter
     Node<T> *getHead() const;
@@ -45,6 +39,7 @@ public:
 
     // Operator
 
+    LinkedList<T> &operator=(const LinkedList<T> &list);
     // Display
     void printLinkedList();
 
@@ -56,24 +51,19 @@ public:
     void popFront();
     void insert(int index, const T &data);
     void erase(int index);
+    void clear();
     void swap(T &a, T &b);
 };
 
 // Getter
 template <typename T>
-Node<T> *LinkedList<T>::getHead() const {
-    return head;
-}
+Node<T> *LinkedList<T>::getHead() const { return head; }
 
 template <typename T>
-Node<T> *LinkedList<T>::getTail() const {
-    return tail;
-}
+Node<T> *LinkedList<T>::getTail() const { return tail; }
 
 template <typename T>
-int LinkedList<T>::getSize() const {
-    return size;
-}
+int LinkedList<T>::getSize() const { return size; }
 
 // Setter
 
@@ -87,6 +77,21 @@ void LinkedList<T>::printLinkedList() {
         temp = temp->getNext();
     }
     std::cout << "\n";
+}
+
+// Operator
+template <typename T>
+LinkedList<T> &LinkedList<T>::operator=(const LinkedList<T> &list) {
+    if (this == &list) {
+        return *this;
+    }
+    this->clear();
+    Node<T> *src = list.head;
+    while (src != nullptr) {
+        this->pushBack(src->data);
+        src = src->next;
+    }
+    return *this;
 }
 
 // Others
@@ -207,6 +212,19 @@ void LinkedList<T>::erase(int index) {
         delete current;
         this->size--;
     }
+}
+
+template <typename T>
+void LinkedList<T>::clear() {
+    Node<T> *current = head;
+    while (current != nullptr) {
+        Node<T> *nextNode = current->getNext();
+        delete current;
+        current = nextNode;
+    }
+    head = nullptr;
+    tail = nullptr;
+    size = 0;
 }
 
 template <typename T>

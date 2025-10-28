@@ -4,32 +4,47 @@
 using namespace std;
 
 class Pet {
-private:
-  int id;
-  string name;
-  string species; // Dog, Cat
-  string breed;   // Husky, Shiba,...
-  int age;
-  double price;
+protected:
+    string id;
+    string name;
+    string breed;
+    int age;
+    float price;
 
 public:
-  Pet(int id, const string &name, const string &species, const string &breed,
-      int age, double price)
-      : id(id), name(name), species(species), breed(breed), age(age),
-        price(price) {}
+    Pet() {}
+    Pet(string id, const string &name, const string &breed, int age, float price)
+        : id(id), name(name), breed(breed), age(age), price(price) {}
 
-  // Getter
-  int getId() const { return id; }
-  string getName() const { return name; }
-  string getSpecies() const { return species; }
-  string getBreed() const { return breed; }
-  int getAge() const { return age; }
-  double getPrice() const { return price; }
+    virtual ~Pet() = default;
 
-  // Setter
-  void setName(const string &newName) { name = newName; }
-  void setSpecies(const string &newSpecies) { species = newSpecies; }
-  void setBreed(const string &newBreed) { breed = newBreed; }
-  void setAge(int newAge) { age = newAge; }
-  void setPrice(double newPrice) { price = newPrice; }
+    // Getter
+    string getId() const { return id; }
+    string getName() const { return name; }
+    string getBreed() const { return breed; }
+    int getAge() const { return age; }
+    float getPrice() const { return price; }
+
+    // Setter
+    void setName(const string &newName) { name = newName; }
+    void setBreed(const string &newBreed) { breed = newBreed; }
+    void setAge(int newAge) { age = newAge; }
+    void setPrice(float newPrice) { price = newPrice; }
+
+    // Phương thức ảo để biết loại thú
+    virtual string getType() const = 0;
+
+    virtual void showInfo(ostream &out) const {
+        out << "ID: " << id << "\n"
+            << "Name: " << name << "\n"
+            << "Breed: " << breed << "\n"
+            << "Age: " << age << "\n"
+            << "Price: " << price << "\n";
+    }
+    friend ostream &operator<<(ostream &out, const Pet &pet);
 };
+
+ostream &operator<<(ostream &out, const Pet &pet) {
+    pet.showInfo(out);
+    return out;
+}

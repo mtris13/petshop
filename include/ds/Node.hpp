@@ -1,78 +1,88 @@
 #pragma once
 #include <iostream>
 
-template <typename T> class Node {
+template <typename T>
+class Node {
 private:
-  T data;
-  Node *next;
-  Node *prev;
+    T data;
+    Node *next;
+    Node *prev;
 
 public:
-  // Ham dung
-  Node();
-  Node(const T &value);
+    Node();
+    Node(const T &value);
+    ~Node();
 
-  // Ham huy
-  ~Node();
+    // Getter
+    T &getData();
+    const T &getData() const;
+    Node *getNext() const;
+    Node *getPrev() const;
 
-  // Getter
-  T getData() const;
-  Node *getNext() const;
-  Node *getPrev() const;
+    // Setter
+    void setData(const T &);
+    void setNext(Node<T> *nextValue);
+    void setPrev(Node<T> *prevValue);
 
-  // Setter
-  void setData(const T &);
-  void setNext(Node<T> *nextValue);
-  void setPrev(Node<T> *prevValue);
+    // Operators
+    bool operator==(Node &value);
+    Node &operator=(const Node<T> &value);
 
-  // Overloading operator
-  bool operator==(Node &value);
-  Node &operator=(const Node<T> &value);
-
-  // Display
-  void printData();
+    // Display
+    void printData();
 };
 
-// Ham dung
+// ================= Implement =================
 template <typename T>
 Node<T>::Node() : data(T()), next(nullptr), prev(nullptr) {}
 
 template <typename T>
 Node<T>::Node(const T &value) : data(value), next(nullptr), prev(nullptr) {}
 
-// Ham huy
-template <typename T> Node<T>::~Node() {}
+template <typename T>
+Node<T>::~Node() {}
 
-// Getter
-template <typename T> T Node<T>::getData() const { return data; }
+template <typename T>
+T &Node<T>::getData() { return data; }
 
-template <typename T> Node<T> *Node<T>::getNext() const { return next; }
+template <typename T>
+const T &Node<T>::getData() const { return data; }
 
-template <typename T> Node<T> *Node<T>::getPrev() const { return prev; }
+template <typename T>
+Node<T> *Node<T>::getNext() const { return next; }
 
-// Setter
-template <typename T> void Node<T>::setData(const T &value) { data = value; }
+template <typename T>
+Node<T> *Node<T>::getPrev() const { return prev; }
 
-template <typename T> void Node<T>::setNext(Node<T> *nextValue) {
-  next = nextValue;
+template <typename T>
+void Node<T>::setData(const T &value) { data = value; }
+
+template <typename T>
+void Node<T>::setNext(Node<T> *nextValue) {
+    next = nextValue;
 }
 
-template <typename T> void Node<T>::setPrev(Node<T> *prevValue) {
-  prev = prevValue;
+template <typename T>
+void Node<T>::setPrev(Node<T> *prevValue) {
+    prev = prevValue;
 }
 
-// Overloading operator
-template <typename T> bool Node<T>::operator==(Node<T> &value) {
-  return data == value.data; // so sánh giá trị chứ không phải object
+template <typename T>
+bool Node<T>::operator==(Node<T> &value) {
+    return data == value.data;
 }
 
-template <typename T> Node<T> &Node<T>::operator=(const Node<T> &value) {
-  if (this != &value) {
-    data = value.data;
-    // không copy next/prev để tránh dính liên kết sai
-  }
-  return *this;
+template <typename T>
+Node<T> &Node<T>::operator=(const Node<T> &value) {
+    if (this != &value)
+        data = value.data;
+    return *this;
 }
 
-// Display
-template <typename T> void Node<T>::printData() { std::cout << data; }
+template <typename T>
+void Node<T>::printData() {
+    if constexpr (std::is_pointer<T>::value)
+        std::cout << *data;
+    else
+        std::cout << data;
+}

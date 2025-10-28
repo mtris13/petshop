@@ -4,13 +4,22 @@
       "name": "Win32",
       "includePath": [
         "${workspaceFolder}/include",
+        "${workspaceFolder}/include/app",
+        "${workspaceFolder}/include/app/controllers",
+        "${workspaceFolder}/include/domain",
+        "${workspaceFolder}/include/domain/entities",
+        "${workspaceFolder}/include/domain/services",
+        "${workspaceFolder}/include/ds",
+        "${workspaceFolder}/include/infra",
+        "${workspaceFolder}/include/infra/repositories",
+        "${workspaceFolder}/include/infra/serialization",
+        "${workspaceFolder}/include/utils",
         "${workspaceFolder}/src",
         "${workspaceFolder}/**"
       ],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
-      "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
       "cStandard": "c17",
-      "cppStandard": "gnu++17",
+      "cppStandard": "c++17",
       "intelliSenseMode": "windows-gcc-x64"
     }
   ],
