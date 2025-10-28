@@ -25,12 +25,12 @@ public:
     const std::string &getItemId() const { return itemId; }
     const std::string &getItemName() const { return itemName; }
     const std::string &getItemType() const { return itemType; }
-    const std::string getPrice() const { return price; }
+    const std::string &getPrice() const { return price; }
 
     // SETTERS
     void setItemId(const std::string &id) { itemId = id; }
     void setItemName(const std::string &name) { itemName = name; }
     void setItemType(const std::string &type) { itemType = type; }
-    void setPrice(float p) { price = to_string(p); }
-    void setPrice(string p) { price = p; }
+    void setPrice(float p) { price = std::to_string(p); }
+    void setPrice(std::string p) { price = p; }
 };

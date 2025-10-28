@@ -25,7 +25,7 @@ public:
     std::string getClientId() const { return clientId; }
     std::string getClientName() const { return clientName; }
     const LinkedList<BillItem> &getItems() const { return items; }
-    string getTotalAmount() const { return totalAmount; }
+    std::string getTotalAmount() const { return totalAmount; }
     std::string getDate() const { return date; }
     std::string getTime() const { return time; }
 
@@ -50,7 +50,7 @@ public:
             total += stof(item->getData().getPrice());
             item = item->getNext();
         }
-        totalAmount = to_string(total);
+        totalAmount = std::to_string(total);
     }
 
     // Hiển thị hóa đơn
