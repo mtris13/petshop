@@ -1,7 +1,4 @@
 #include "infra/repositories/PetRepoFile.hpp"
-#include <fstream>
-#include <sstream>
-#include <string>
 using namespace std;
 
 string PetRepository::filePath(const string &petCode) {
@@ -91,6 +88,11 @@ bool PetRepository::isDogId(const string &petCode) {
     if (petCode.length() == petIdLength && petCode[0] == 'd')
         return true;
     return false;
+}
+string PetRepository::toLowercase(std::string &str) {
+    for (int i = 0; i < str.length(); i++)
+        str[i] = tolower(str[i]);
+    return str;
 }
 
 // --- THÊM HÀM HELPER ĐỂ XÓA DẤU NGOẶC KÉP ---
@@ -417,4 +419,84 @@ void PetRepository::deletePet(const string &petCode) {
     } else {
         remove(tempPath.c_str());
     }
+}
+
+LinkedList<Dog> PetRepository::searchDog(std::string searchType, std::string &keyword) {
+    toLowercase(keyword);
+    LinkedList<Dog> dogs;
+    ifstream file(dogFilePath); // Giả sử bạn có biến thành viên "dogFilePath"
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << dogFilePath << '\n';
+        return dogs;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+
+        stringstream ss(line);
+        string id, statusStr, name, breed;
+
+        // --- Lưu ý: Phải parse đúng thứ tự file .txt của bạn ---
+        // (Dựa theo code gốc của bạn)
+        getline(ss, id, '|');
+        getline(ss, statusStr, '|');
+        getline(ss, name, '|');
+        getline(ss, breed, '|');
+        string searchField = (searchType == "name") ? toLowercase(name) : toLowercase(breed);
+
+        if (searchField.find(keyword) != string::npos) {
+            string ageStr, priceStr, energyStr, description;
+            getline(ss, ageStr, '|');
+            getline(ss, priceStr, '|');
+            getline(ss, energyStr, '|');
+            getline(ss, description); // Lấy phần còn lại làm description
+            Dog dog = Dog(id, name, breed, stoi(ageStr), stol(priceStr), stoi(statusStr), stoi(energyStr), description);
+            dogs.pushBack(dog);
+        }
+    }
+    file.close();
+    return dogs;
+}
+
+LinkedList<Cat> PetRepository::searchCat(string searchType, string &keyword) {
+    toLowercase(keyword);
+    LinkedList<Cat> cats;
+    ifstream file(catFilePath); // Thay đổi: Dùng file Cat
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << catFilePath << '\n';
+        return cats;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+
+        stringstream ss(line);
+        string id, statusStr, name, breed;
+
+        getline(ss, id, '|');
+        getline(ss, statusStr, '|');
+        getline(ss, name, '|');
+        getline(ss, breed, '|');
+
+        // Logic tìm kiếm giống hệt
+        string searchField = (searchType == "name") ? toLowercase(name) : toLowercase(breed);
+
+        if (searchField.find(keyword) != string::npos) {
+            string ageStr, priceStr, fur, description; // Thay đổi: fur thay vì energyStr
+
+            getline(ss, ageStr, '|');
+            getline(ss, priceStr, '|');
+            getline(ss, fur, '|');
+            getline(ss, description);
+
+            Cat cat = Cat(id, name, breed, stoi(ageStr), stol(priceStr), stoi(statusStr), fur, description);
+            cats.pushBack(cat);
+        }
+    }
+    file.close();
+    return cats;
 }

@@ -13,7 +13,6 @@
 #include "infra/repositories/BookingRepoFile.hpp"
 #include "infra/repositories/PetRepoFile.hpp"
 #include "infra/repositories/ServiceRepoFile.hpp"
-#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
@@ -395,86 +394,59 @@ private:
         } while (choice != 0);
     }
 
-    void viewAllPets() {
-        Menu::displayHeader("ALL PETS");
-
-        // ======== DOGS ========
-        cout << "\n========== DOGS ==========\n";
-        cout << setw(6) << left << "ID" << setw(6) << left << "Sold" << setw(15)
-             << left << "Name" << setw(20) << left << "Breed" << setw(5) << right
-             << "Age" << setw(12) << right << "Price" << setw(8) << right
-             << "     Energy"
-             << "\n";
-        cout << string(75, '-') << "\n";
-
-        ifstream dogFile("../data/Dog.txt");
+    void displayPets(LinkedList<Dog> &dogList) {
         int dogCount = 0;
-        if (dogFile.is_open()) {
-            string line;
-            while (getline(dogFile, line)) {
-                if (line.empty())
-                    continue;
-                stringstream ss(line);
-                string id, status, name, breed, age, price, energy;
-                getline(ss, id, '|');
-                getline(ss, status, '|');
-                getline(ss, name, '|');
-                getline(ss, breed, '|');
-                getline(ss, age, '|');
-                getline(ss, price, '|');
-                getline(ss, energy, '|');
-
-                string soldStatus = (status == "0") ? "Yes" : "No";
-
-                cout << setw(6) << left << id << setw(6) << left << soldStatus
-                     << setw(15) << left << name << setw(20) << left << breed << setw(5)
-                     << right << age << setw(12) << right << fixed << setprecision(0)
-                     << stof(price) << setw(8) << right << energy << "/10\n";
-                dogCount++;
-            }
-            dogFile.close();
-        }
-        cout << "Total Dogs: " << dogCount << "\n";
-
-        // ======== CATS ========
-        cout << "\n========== CATS ==========\n";
-        cout << setw(6) << left << "ID" << setw(6) << left << "Sold" << setw(15)
-             << left << "Name" << setw(20) << left << "Breed" << setw(5) << right
-             << "Age" << setw(12) << right << "Price" << setw(10) << left
-             << "          Fur"
-             << "\n";
+        cout << "\n========== DOGS ==========\n";
+        cout << setw(6) << left << "ID" << setw(12) << left << "Sold"
+             << setw(15) << left << "Name" << setw(20) << left << "Breed" << setw(3) << right
+             << "Age" << setw(12) << right << "Price" << setw(8) << right << "Energy" << "\n";
         cout << string(80, '-') << "\n";
 
-        ifstream catFile("../data/Cat.txt");
+        Node<Dog> *dog = dogList.getHead();
+        while (dog != nullptr) {
+            cout << setw(6) << left << dog->getData().getId() << setw(12) << left << dog->getData().getStatus()
+                 << setw(15) << left << dog->getData().getName() << setw(20) << left << dog->getData().getBreed() << setw(3)
+                 << right << dog->getData().getAge() << setw(12) << right << fixed << setprecision(8)
+                 << dog->getData().getPrice() << setw(8) << right << dog->getData().getEnergyLevel() << "/10\n";
+            dog = dog->getNext();
+            dogCount++;
+        }
+        cout << "Total Dogs: " << dogCount << "\n";
+        cout << string(80, '-') << "\n";
+    }
+
+    void displayPets(LinkedList<Cat> &catList) {
+        cout << "\n========== CATS ==========\n";
+        cout << setw(6) << left << "ID" << setw(12) << left << "Sold" << setw(15)
+             << left << "Name" << setw(20) << left << "Breed" << setw(3) << right
+             << "Age" << setw(12) << right << "Price" << setw(8) << right << "Fur" << "\n";
+        cout << string(80, '-') << "\n";
+
         int catCount = 0;
-        if (catFile.is_open()) {
-            string line;
-            while (getline(catFile, line)) {
-                if (line.empty())
-                    continue;
-                stringstream ss(line);
-                string id, status, name, breed, age, price, fur;
-                getline(ss, id, '|');
-                getline(ss, status, '|');
-                getline(ss, name, '|');
-                getline(ss, breed, '|');
-                getline(ss, age, '|');
-                getline(ss, price, '|');
-                getline(ss, fur, '|');
-
-                string soldStatus = (status == "0") ? "Yes" : "No";
-
-                cout << setw(6) << left << id << setw(6) << left << soldStatus
-                     << setw(15) << left << name << setw(20) << left << breed << setw(5)
-                     << right << age << setw(12) << right << fixed << setprecision(0)
-                     << stof(price) << setw(10) << left << "" << fur << "\n";
-                catCount++;
-            }
-            catFile.close();
+        Node<Cat> *cat = catList.getHead();
+        while (cat != nullptr) {
+            cout << setw(6) << left << cat->getData().getId() << setw(12) << left << cat->getData().getStatus()
+                 << setw(15) << left << cat->getData().getName() << setw(20) << left << cat->getData().getBreed() << setw(3)
+                 << right << cat->getData().getAge() << setw(12) << right << fixed << setprecision(0)
+                 << cat->getData().getPrice() << setw(8) << right << cat->getData().getFurLength() << "\n";
+            cat = cat->getNext();
+            catCount++;
         }
         cout << "Total Cats: " << catCount << "\n";
+        cout << string(80, '-') << "\n";
+    }
 
-        cout << "\nGrand Total: " << (dogCount + catCount) << " pets\n";
+    void viewAllPets() {
+        Menu::displayHeader("ALL PETS");
+        int dogCount = 0;
+
+        // ======== DOGS ========
+
+        LinkedList<Dog> dogList = petRepo.getAllDogInfo();
+        displayPets(dogList);
+        // ======== CATS ========
+        LinkedList<Cat> catList = petRepo.getAllCatInfo();
+        displayPets(catList);
     }
 
     void addNewPet() {
@@ -491,54 +463,58 @@ private:
         string id, name, breed;
         int age;
         long price;
-
-        cout << "Enter Pet ID (e.g., d011 or c011): ";
-        cin >> id;
-        cin.ignore();
-
-        if (petRepo.isValidPetId(id)) {
-            Menu::displayError("Pet ID already exists!");
-            return;
-        }
-
-        cout << "Enter Name: ";
-        getline(cin, name);
-        cout << "Enter Breed: ";
-        getline(cin, breed);
-        cout << "Enter Age (years): ";
-        cin >> age;
-        cout << "Enter Price (VND): ";
-        cin >> price;
-        string desc;
-        cout << "Enter description: ";
-        cin.ignore();
-        getline(cin, desc);
-
-        if (type == 1) {
-            int energy;
-            cout << "Enter Energy Level (1-10): ";
-            cin >> energy;
-
-            if (energy < 1 || energy > 10) {
-                Menu::displayError("Energy level must be between 1 and 10!");
-                return;
+        while (true) {
+            cout << "Enter Pet ID (e.g. 001): ";
+            cin >> id;
+            cin.ignore();
+            if (type == 1)
+                id = "d" + id;
+            else
+                id = "c" + id;
+            if (petRepo.isValidPetId(id)) {
+                Menu::displayError("Pet ID already exists!");
+                continue;
             }
 
-            Dog newDog(id, name, breed, age, price, 1, energy, desc);
-            petRepo.setDogInfo(newDog);
-            Menu::displaySuccess("Dog added successfully!");
+            cout << "Enter Name: ";
+            getline(cin, name);
+            cout << "Enter Breed: ";
+            getline(cin, breed);
+            cout << "Enter Age (years): ";
+            cin >> age;
+            cout << "Enter Price (VND): ";
+            cin >> price;
+            string desc;
+            cout << "Enter description: ";
+            cin.ignore();
+            getline(cin, desc);
 
-        } else if (type == 2) {
-            string furLength;
-            cout << "Enter Fur Length (Short/Medium/Long): ";
-            cin >> furLength;
+            if (type == 1) {
+                int energy;
+                cout << "Enter Energy Level (1-10): ";
+                cin >> energy;
 
-            Cat newCat = Cat(id, name, breed, age, price, 1, furLength, desc);
-            petRepo.setCatInfo(newCat);
-            Menu::displaySuccess("Cat added successfully!");
+                if (energy < 1 || energy > 10) {
+                    Menu::displayError("Energy level must be between 1 and 10!");
+                    return;
+                }
 
-        } else {
-            Menu::displayError("Invalid pet type!");
+                Dog newDog(id, name, breed, age, price, 1, energy, desc);
+                petRepo.setDogInfo(newDog);
+                Menu::displaySuccess("Dog added successfully!");
+                cout << newDog;
+            } else if (type == 2) {
+                string furLength;
+                cout << "Enter Fur Length (Short/Medium/Long): ";
+                cin >> furLength;
+
+                Cat newCat = Cat(id, name, breed, age, price, 1, furLength, desc);
+                petRepo.setCatInfo(newCat);
+                Menu::displaySuccess("Cat added successfully!");
+                cout << newCat;
+            } else {
+                Menu::displayError("Invalid pet type!");
+            }
         }
     }
 
@@ -556,91 +532,130 @@ private:
         }
 
         if (id[0] == 'd') {
-            // Update Dog
             Dog dog = petRepo.getDogInfo(id);
-            cout << "\nCurrent Info:\n";
-            cout << "Name: " << dog.getName() << "\n";
-            cout << "Breed: " << dog.getBreed() << "\n";
-            cout << "Age: " << dog.getAge() << "\n";
-            cout << "Price: " << dog.getPrice() << "\n";
-            cout << "Energy: " << dog.getEnergyLevel() << "\n";
+            cout << "\n====Current Info=====\n"
+                 << dog; // operator <<
 
             string name, breed, ageStr, priceStr, energyStr;
 
             cout << "\nEnter New Name (or press Enter to keep): ";
             getline(cin, name);
-            if (name.empty())
-                name = dog.getName();
+            if (!name.empty())
+                dog.setName(name);
 
             cout << "Enter New Breed (or press Enter to keep): ";
             getline(cin, breed);
-            if (breed.empty())
-                breed = dog.getBreed();
+            if (!breed.empty())
+                dog.setBreed(breed);
 
-            cout << "Enter New Age (or press Enter to keep): ";
-            getline(cin, ageStr);
-            int age = ageStr.empty() ? dog.getAge() : stoi(ageStr);
+            while (true) {
+                cout << "Enter New Age (or press Enter to keep): ";
+                getline(cin, ageStr);
+                if (ageStr.empty())
+                    break;
+                try {
+                    int age = stoi(ageStr);
+                    dog.setAge(age);
+                    break;
+                } catch (const std::invalid_argument &e) {
+                    std::cerr << "Error: Input is not a number. Please try again.\n";
+                } catch (const std::out_of_range &e) {
+                    std::cerr << "Error: Number is too large or too small. Please try again.\n";
+                }
+            }
 
-            cout << "Enter New Price (or press Enter to keep): ";
-            getline(cin, priceStr);
-            long price = priceStr.empty() ? dog.getPrice() : stof(priceStr);
+            while (true) {
+                cout << "Enter New Price (or press Enter to keep): ";
+                getline(cin, priceStr);
+                if (priceStr.empty())
+                    break;
+                try {
+                    long price = stol(priceStr); // SỬA: Đã dùng stol
+                    dog.setPrice(price);
+                    break;
+                } catch (const std::invalid_argument &e) {
+                    std::cerr << "Error: Input is not a number. Please try again.\n";
+                } catch (const std::out_of_range &e) {
+                    std::cerr << "Error: Number is too large or too small. Please try again.\n";
+                }
+            }
 
-            cout << "Enter New Energy Level (or press Enter to keep): ";
-            getline(cin, energyStr);
-            int energy = energyStr.empty() ? dog.getEnergyLevel() : stoi(energyStr);
-
-            dog.setName(name);
-            dog.setBreed(breed);
-            dog.setAge(age);
-            dog.setPrice(price);
-            dog.setEnergyLevel(energy);
+            while (true) {
+                cout << "Enter New Energy Level (or press Enter to keep): ";
+                getline(cin, energyStr);
+                if (energyStr.empty())
+                    break;
+                try {
+                    int energy = stoi(energyStr);
+                    dog.setEnergyLevel(energy);
+                    break;
+                } catch (const std::invalid_argument &e) {
+                    std::cerr << "Error: Input is not a number. Please try again.\n";
+                } catch (const std::out_of_range &e) {
+                    std::cerr << "Error: Number is too large or too small. Please try again.\n";
+                }
+            }
 
             petRepo.setDogInfo(dog);
             Menu::displaySuccess("Dog updated successfully!");
-
-        } else {
-            // Update Cat
+            cout << dog;
+        } else { // Cat
             Cat cat = petRepo.getCatInfo(id);
-            cout << "\nCurrent Info:\n";
-            cout << "Name: " << cat.getName() << "\n";
-            cout << "Breed: " << cat.getBreed() << "\n";
-            cout << "Age: " << cat.getAge() << "\n";
-            cout << "Price: " << cat.getPrice() << "\n";
-            cout << "Fur Length: " << cat.getFurLength() << "\n";
+            cout << "\n======Current Info======\n"
+                 << cat; // operator <<
 
             string name, breed, ageStr, priceStr, fur;
 
             cout << "\nEnter New Name (or press Enter to keep): ";
             getline(cin, name);
-            if (name.empty())
-                name = cat.getName();
+            if (!name.empty())
+                cat.setName(name);
 
             cout << "Enter New Breed (or press Enter to keep): ";
             getline(cin, breed);
-            if (breed.empty())
-                breed = cat.getBreed();
+            if (!breed.empty())
+                cat.setBreed(breed);
 
-            cout << "Enter New Age (or press Enter to keep): ";
-            getline(cin, ageStr);
-            int age = ageStr.empty() ? cat.getAge() : stoi(ageStr);
+            while (true) {
+                cout << "Enter New Age (or press Enter to keep): ";
+                getline(cin, ageStr);
+                if (ageStr.empty())
+                    break;
+                try {
+                    int age = stoi(ageStr);
+                    cat.setAge(age);
+                    break;
+                } catch (const std::invalid_argument &e) {
+                    std::cerr << "Error: Input is not a number. Please try again.\n";
+                } catch (const std::out_of_range &e) {
+                    std::cerr << "Error: Number is too large or too small. Please try again.\n";
+                }
+            }
 
-            cout << "Enter New Price (or press Enter to keep): ";
-            getline(cin, priceStr);
-            long price = priceStr.empty() ? cat.getPrice() : stof(priceStr);
+            while (true) {
+                cout << "Enter New Price (or press Enter to keep): ";
+                getline(cin, priceStr);
+                if (priceStr.empty())
+                    break;
+                try {
+                    long price = stol(priceStr); // SỬA: Đã dùng stol
+                    cat.setPrice(price);
+                    break;
+                } catch (const std::invalid_argument &e) {
+                    std::cerr << "Error: Input is not a number. Please try again.\n";
+                } catch (const std::out_of_range &e) {
+                    std::cerr << "Error: Number is too large or too small. Please try again.\n";
+                }
+            }
 
             cout << "Enter New Fur Length (or press Enter to keep): ";
             getline(cin, fur);
-            if (fur.empty())
-                fur = cat.getFurLength();
-
-            cat.setName(name);
-            cat.setBreed(breed);
-            cat.setAge(age);
-            cat.setPrice(price);
-            cat.setFurLength(fur);
+            if (!fur.empty())
+                cat.setFurLength(fur);
 
             petRepo.setCatInfo(cat);
             Menu::displaySuccess("Cat updated successfully!");
+            cout << cat;
         }
     }
 
@@ -656,6 +671,14 @@ private:
             return;
         }
 
+        cout << "==== PET NEEDED DELETE INFO ====\n";
+        if (id[0] == 'd') {
+            Dog dog = petRepo.getDogInfo(id);
+            cout << dog;
+        } else if (id[0] == 'c') {
+            Cat cat = petRepo.getCatInfo(id);
+            cout << cat;
+        }
         char confirm;
         cout << "Are you sure you want to delete this pet? (y/n): ";
         cin >> confirm;
@@ -694,21 +717,11 @@ private:
             if (id[0] == 'd') {
                 Dog dog = petRepo.getDogInfo(id);
                 cout << "\n=== DOG FOUND ===\n";
-                cout << "ID: " << dog.getId() << "\n";
-                cout << "Name: " << dog.getName() << "\n";
-                cout << "Breed: " << dog.getBreed() << "\n";
-                cout << "Age: " << dog.getAge() << "\n";
-                cout << "Price: " << dog.getPrice() << "\n";
-                cout << "Energy: " << dog.getEnergyLevel() << "/10\n";
+                cout << dog;
             } else {
                 Cat cat = petRepo.getCatInfo(id);
                 cout << "\n=== CAT FOUND ===\n";
-                cout << "ID: " << cat.getId() << "\n";
-                cout << "Name: " << cat.getName() << "\n";
-                cout << "Breed: " << cat.getBreed() << "\n";
-                cout << "Age: " << cat.getAge() << "\n";
-                cout << "Price: " << cat.getPrice() << "\n";
-                cout << "Fur Length: " << cat.getFurLength() << "\n";
+                cout << cat;
             }
 
         } else if (choice == 2 || choice == 3) {
@@ -716,81 +729,20 @@ private:
             cout << "Enter search keyword: ";
             getline(cin, keyword);
 
-            // Convert to lowercase for case-insensitive search
-            transform(keyword.begin(), keyword.end(), keyword.begin(), ::tolower);
+            string searchType = (choice == 2) ? "name" : "breed";
 
-            bool found = false;
+            LinkedList<Dog> dogs = petRepo.searchDog(searchType, keyword);
+            LinkedList<Cat> cats = petRepo.searchCat(searchType, keyword);
 
-            // Search in Dogs
-            ifstream dogFile("../data/Dog.txt");
-            if (dogFile.is_open()) {
-                string line;
-                while (getline(dogFile, line)) {
-                    if (line.empty())
-                        continue;
-                    stringstream ss(line);
-                    string id, status, name, breed, age, price, energy;
-                    getline(ss, id, '|');
-                    getline(ss, status, '|');
-                    getline(ss, name, '|');
-                    getline(ss, breed, '|');
-                    getline(ss, age, '|');
-                    getline(ss, price, '|');
-                    getline(ss, energy, '|');
-
-                    string searchField = (choice == 2) ? name : breed;
-                    transform(searchField.begin(), searchField.end(), searchField.begin(),
-                              ::tolower);
-
-                    if (searchField.find(keyword) != string::npos) {
-                        if (!found) {
-                            cout << "\n=== SEARCH RESULTS ===\n";
-                            found = true;
-                        }
-                        cout << "\n[DOG] " << id << " - " << name << "\n";
-                        cout << "Breed: " << breed << ", Age: " << age
-                             << ", Price: " << price << ", Energy: " << energy << "/10\n";
-                    }
-                }
-                dogFile.close();
-            }
-
-            // Search in Cats
-            ifstream catFile("../data/Cat.txt");
-            if (catFile.is_open()) {
-                string line;
-                while (getline(catFile, line)) {
-                    if (line.empty())
-                        continue;
-                    stringstream ss(line);
-                    string id, name, breed, age, price, fur;
-                    getline(ss, id, '|');
-                    getline(ss, name, '|');
-                    getline(ss, breed, '|');
-                    getline(ss, age, '|');
-                    getline(ss, price, '|');
-                    getline(ss, fur, '|');
-
-                    string searchField = (choice == 2) ? name : breed;
-                    transform(searchField.begin(), searchField.end(), searchField.begin(),
-                              ::tolower);
-
-                    if (searchField.find(keyword) != string::npos) {
-                        if (!found) {
-                            cout << "\n=== SEARCH RESULTS ===\n";
-                            found = true;
-                        }
-                        cout << "\n[CAT] " << id << " - " << name << "\n";
-                        cout << "Breed: " << breed << ", Age: " << age
-                             << ", Price: " << price << ", Fur: " << fur << "\n";
-                    }
-                }
-                catFile.close();
-            }
-
+            bool found = !dogs.isEmpty() || !cats.isEmpty();
             if (!found) {
                 Menu::displayInfo("No pets found matching your search.");
+                return;
             }
+
+            cout << "\n=== SEARCH RESULTS ===\n";
+            displayPets(dogs);
+            displayPets(cats);
 
         } else {
             Menu::displayError("Invalid choice!");
@@ -837,7 +789,8 @@ private:
         long price;
         int duration;
 
-        cout << "Enter Service ID (e.g., SP011): ";
+        cout << "Enter Service ID (e.g., 011): ";
+        id = "SP" + id;
         cin >> id;
         cin.ignore();
         cout << "Enter Service Name: ";
