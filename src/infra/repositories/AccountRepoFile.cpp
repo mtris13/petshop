@@ -200,6 +200,81 @@ Client AccountRepository::getClientInfo(const string &loginCode) {
     return info;
 }
 
+LinkedList<Admin> AccountRepository::getAllAdminInfo() {
+    ifstream file(AdminAccountFilePath);
+    LinkedList<Admin> admin;
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << AdminAccountFilePath << '\n';
+        return admin;
+    }
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        string code, name, pw, gender;
+        getline(ss, code, '|');
+        getline(ss, name, '|');
+        getline(ss, pw, '|');
+        getline(ss, gender, '|');
+        Admin ad(code, name, pw, gender);
+        admin.pushBack(ad);
+    }
+    file.close();
+    return admin;
+}
+
+LinkedList<Staff> AccountRepository::getAllStaffInfo() {
+    ifstream file(StaffAccountFilePath);
+    LinkedList<Staff> staff;
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << StaffAccountFilePath << '\n';
+        return staff;
+    }
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        string code, name, pw, gender, sal;
+        getline(ss, code, '|');
+        getline(ss, name, '|');
+        getline(ss, pw, '|');
+        getline(ss, gender, '|');
+        getline(ss, sal);
+        Staff st = Staff(code, name, pw, gender, stol(sal));
+        staff.pushBack(st);
+    }
+    file.close();
+    return staff;
+}
+
+LinkedList<Client> AccountRepository::getAllClientInfo() {
+    ifstream file(ClientAccountFilePath);
+    LinkedList<Client> client;
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << ClientAccountFilePath << '\n';
+        return client;
+    }
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        string code, name, pw, gender, street, city;
+        getline(ss, code, '|');
+        getline(ss, name, '|');
+        getline(ss, pw, '|');
+        getline(ss, gender, '|');
+        getline(ss, street, '|');
+        getline(ss, city);
+        Client cl(code, name, pw, gender, street, city);
+        client.pushBack(cl);
+    }
+    file.close();
+    return client;
+}
+
 // SET
 void AccountRepository::setAdminInfo(const Admin &ad) {
     string line = ad.getId() + '|' + ad.getName() + '|' + ad.getPassword() + '|' +

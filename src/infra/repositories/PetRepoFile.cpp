@@ -138,8 +138,7 @@ Dog PetRepository::getDogInfo(const string &petCode) {
 
     description = trimQuotes(description); // Xóa dấu ngoặc kép
 
-    dog = Dog(code, name, breed, stoi(age), stol(price), stoi(energy),
-              description);
+    dog = Dog(code, name, breed, stoi(age), stol(price), stoi(status), stoi(energy), description);
     return dog;
 }
 
@@ -166,7 +165,7 @@ Cat PetRepository::getCatInfo(const string &petCode) {
 
     description = trimQuotes(description); // Xóa dấu ngoặc kép
 
-    cat = Cat(code, name, breed, stoi(age), stol(price), fur, description);
+    cat = Cat(code, name, breed, stoi(age), stol(price), stoi(status), fur, description);
     return cat;
 }
 
@@ -196,7 +195,7 @@ LinkedList<Cat> PetRepository::getAllCatInfo() {
 
         description = trimQuotes(description); // Xóa dấu ngoặc kép
 
-        Cat cat(code, name, breed, stoi(age), stol(price), fur, description);
+        Cat cat = Cat(code, name, breed, stoi(age), stol(price), stoi(status), fur, description);
         cats.pushBack(cat);
     }
     file.close();
@@ -229,8 +228,7 @@ LinkedList<Dog> PetRepository::getAllDogInfo() {
 
         description = trimQuotes(description); // Xóa dấu ngoặc kép
 
-        Dog dog(code, name, breed, stoi(age), stol(price), stoi(energy),
-                description);
+        Dog dog = Dog(code, name, breed, stoi(age), stol(price), stoi(status), stoi(energy), description);
         dogs.pushBack(dog);
     }
     file.close();
@@ -264,7 +262,7 @@ LinkedList<Cat> PetRepository::getAllCatInfoAvailable() {
         description = trimQuotes(description); // Xóa dấu ngoặc kép
 
         if (status == "1") {
-            Cat cat(code, name, breed, stoi(age), stol(price), fur, description);
+            Cat cat = Cat(code, name, breed, stoi(age), stol(price), stoi(status), fur, description);
             cats.pushBack(cat);
         }
     }
@@ -299,8 +297,7 @@ LinkedList<Dog> PetRepository::getAllDogInfoAvailable() {
         description = trimQuotes(description); // Xóa dấu ngoặc kép
 
         if (status == "1") {
-            Dog dog(code, name, breed, stoi(age), stol(price), stoi(energy),
-                    description);
+            Dog dog = Dog(code, name, breed, stoi(age), stol(price), stoi(status), stoi(energy), description);
             dogs.pushBack(dog);
         }
     }

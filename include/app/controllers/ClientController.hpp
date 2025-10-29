@@ -75,48 +75,23 @@ private:
 
     void displayDogsForSale() {
         Menu::displayHeader("DOGS FOR SALE");
-
-        ifstream file("../data/Dog.txt");
-        if (!file.is_open()) {
-            Menu::displayError("Cannot open Dog.txt");
-            return;
-        }
-
         cout << "\n========== DOGS FOR SALE ==========\n";
         cout << left << setw(6) << "ID" << setw(15) << "Name" << setw(20) << "Breed"
              << right << setw(6) << "Age" << setw(14) << "Price" << setw(10)
              << "Energy" << setw(12) << "Status"
              << "\n";
         cout << string(83, '-') << "\n";
-
-        string line;
-        int count = 0;
-        while (getline(file, line)) {
-            if (line.empty())
-                continue;
-
-            stringstream ss(line);
-            string id, status, name, breed, age, price, energy;
-            getline(ss, id, '|');
-            getline(ss, status, '|');
-            getline(ss, name, '|');
-            getline(ss, breed, '|');
-            getline(ss, age, '|');
-            getline(ss, price, '|');
-            getline(ss, energy, '|');
-
-            string statusText = (status == "1") ? "Available" : "Sold";
-
-            cout << left << setw(6) << id << setw(15) << name << setw(20) << breed
-                 << right << setw(6) << age << setw(14) << fixed << setprecision(0)
-                 << stof(price) << setw(7) << energy << "/10" << setw(12)
-                 << statusText << "\n";
-
-            count++;
+        // print dog information (that avaiable)
+        LinkedList<Dog> dog = petRepo.getAllDogInfoAvailable();
+        Node<Dog> *current = dog.getHead();
+        while (current != nullptr) {
+            cout << left << setw(6) << current->getData().getId() << setw(15) << current->getData().getName() << setw(20) << current->getData().getBreed()
+                 << right << setw(6) << current->getData().getAge() << setw(14) << fixed << setprecision(0)
+                 << current->getData().getPrice() << setw(7) << current->getData().getEnergyLevel() << "/10" << setw(12)
+                 << current->getData().getStatus() << "\n";
+            current = current->getNext();
         }
-
         cout << string(83, '-') << "\n";
-        file.close();
     }
 
     void displayCatsForSale() {

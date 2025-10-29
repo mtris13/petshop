@@ -5,14 +5,11 @@
 class Dog : public Pet {
 private:
     int energyLevel; // Độ năng động (1–10)
-
-    // --- BỔ SUNG THÔNG TIN MÔ TẢ ---
-    std::string description; // Mô tả chi tiết (tính cách, sức khỏe, thói quen...)
-
 public:
     Dog() {}
-    Dog(std::string id, const std::string &name, const std::string &breed, int age, float price, int energyLevel = 5, const std::string &desc = "No description available.")
-        : Pet(id, name, breed, age, price), energyLevel(energyLevel), description(desc) {} // Thêm description vào hàm khởi tạo
+    Dog(const std::string &id, const std::string &name, const std::string &breed, const int &age,
+        const long &price, const bool &status, const int &energyLevel = 5, const std::string &desc = "No description yet.")
+        : Pet(id, name, breed, age, price, status, desc), energyLevel(energyLevel) {} // Thêm description vào hàm khởi tạo
 
     // --- Getter/Setter cho thuộc tính cũ và mới ---
     int getEnergyLevel() const { return energyLevel; }
@@ -27,11 +24,8 @@ public:
     // --- Hàm showInfo() (cho console) ---
     // Sửa dòng này
     void showInfo(std::ostream &out) const override {
-        cout << "=== DOG INFO ===\n";
+        std::cout << "=== DOG INFO ===\n";
         Pet::showInfo(out); // Tên, giống, tuổi, giá
-        cout << "Energy Level: " << energyLevel << "/10\n";
-
-        // --- Hiển thị description ---
-        cout << "Description: " << description << "\n";
+        std::cout << "Energy Level: " << energyLevel << "/10\n";
     }
 };

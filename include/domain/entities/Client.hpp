@@ -16,6 +16,7 @@ public:
     // Getter
     string getStreet() const { return street; }
     string getCity() const { return city; }
+    string getAddress() const { return street + ", " + city; }
 
     // Setter
     void setStreet(const string &street) { this->street = street; }
