@@ -14,58 +14,58 @@
 
 class ServiceRepository {
 private:
-  const string serviceFilePath = "../data/services.txt";
-  const string invalid = "";
+    const string serviceFilePath = "../data/services.txt";
+    const string invalid = "";
 
-  // Helper: đọc một dòng dữ liệu theo serviceId
-  string readingFile(const string &serviceId);
+    // Helper: đọc một dòng dữ liệu theo serviceId
+    string readingFile(const string &serviceId);
 
-  // Helper: ghi/cập nhật một dòng dữ liệu
-  void writingFile(const string &serviceId, const string &writeLine);
+    // Helper: ghi/cập nhật một dòng dữ liệu
+    void writingFile(const string &serviceId, const string &writeLine);
 
 public:
-  ServiceRepository() {}
+    ServiceRepository() {}
 
-  // ===== GET Operations =====
+    // ===== GET Operations =====
 
-  // Lấy thông tin đầy đủ của một service
-  Service getServiceInfo(const string &serviceId);
+    // Lấy thông tin đầy đủ của một service
+    Service getServiceInfo(const string &serviceId);
 
-  // Lấy danh sách tất cả services spa
-  LinkedList<Service> getAllServices();
+    // Lấy danh sách tất cả services spa
+    LinkedList<Service> getAllServices();
 
-  // Lấy giá của service
-  float getServicePrice(const string &serviceId);
+    // Lấy giá của service
+    long getServicePrice(const string &serviceId);
 
-  // Lấy thời gian thực hiện
-  int getServiceDuration(const string &serviceId);
+    // Lấy thời gian thực hiện
+    int getServiceDuration(const string &serviceId);
 
-  // ===== SET Operations =====
+    // ===== SET Operations =====
 
-  // Thêm hoặc cập nhật service
-  void setServiceInfo(const Service &service);
+    // Thêm hoặc cập nhật service
+    void setServiceInfo(const Service &service);
 
-  // Cập nhật giá
-  void updatePrice(const string &serviceId, float newPrice);
+    // Cập nhật giá
+    void updatePrice(const string &serviceId, long newPrice);
 
-  // ===== CHECK Operations =====
+    // ===== CHECK Operations =====
 
-  // Kiểm tra serviceId có tồn tại không
-  bool isValidServiceId(const string &serviceId);
+    // Kiểm tra serviceId có tồn tại không
+    bool isValidServiceId(const string &serviceId);
 
-  // ===== DELETE Operation =====
+    // ===== DELETE Operation =====
 
-  // Xóa vĩnh viễn khỏi file
-  void deleteService(const string &serviceId);
+    // Xóa vĩnh viễn khỏi file
+    void deleteService(const string &serviceId);
 
-  // ===== SEARCH Operations =====
+    // ===== SEARCH Operations =====
 
-  // Tìm kiếm service theo tên (partial match)
-  LinkedList<Service> searchByName(const string &keyword);
+    // Tìm kiếm service theo tên (partial match)
+    LinkedList<Service> searchByName(const string &keyword);
 
-  // Tìm services trong khoảng giá
-  LinkedList<Service> searchByPriceRange(float minPrice, float maxPrice);
+    // Tìm services trong khoảng giá
+    LinkedList<Service> searchByPriceRange(long minPrice, long maxPrice);
 
-  // Đếm tổng số services
-  int countServices();
+    // Đếm tổng số services
+    int countServices();
 };

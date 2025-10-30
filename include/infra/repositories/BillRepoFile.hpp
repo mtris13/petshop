@@ -34,9 +34,9 @@ public:
     // Lấy danh sách tất cả bills
     LinkedList<std::string> getAllBillIds();
     // Thống kê doanh thu
-    float calculateTotalRevenue();
+    long calculateTotalRevenue();
     // Thống kê doanh thu từ bán pet
-    float calculatePetSalesRevenue();
+    long calculatePetSalesRevenue();
     // Thống kê doanh thu từ spa
-    float calculateSpaRevenue();
+    long calculateSpaRevenue();
 };

@@ -104,7 +104,7 @@ Service ServiceRepository::getServiceInfo(const string &serviceId) {
     getline(ss, priceStr, '|');
     getline(ss, durationStr, '|');
 
-    float price = stof(priceStr);
+    long price = stof(priceStr);
     int duration = stoi(durationStr);
 
     service = Service(id, name, desc, price, duration);
@@ -142,7 +142,7 @@ LinkedList<Service> ServiceRepository::getAllServices() {
     return services;
 }
 
-float ServiceRepository::getServicePrice(const string &serviceId) {
+long ServiceRepository::getServicePrice(const string &serviceId) {
     Service service = getServiceInfo(serviceId);
     return service.getPrice();
 }
@@ -162,7 +162,7 @@ void ServiceRepository::setServiceInfo(const Service &service) {
     writingFile(service.getId(), line);
 }
 
-void ServiceRepository::updatePrice(const string &serviceId, float newPrice) {
+void ServiceRepository::updatePrice(const string &serviceId, long newPrice) {
     Service service = getServiceInfo(serviceId);
     if (service.getId().empty()) {
         cerr << "Error: Service not found " << serviceId << '\n';
@@ -249,14 +249,14 @@ LinkedList<Service> ServiceRepository::searchByName(const string &keyword) {
     return results;
 }
 
-LinkedList<Service> ServiceRepository::searchByPriceRange(float minPrice,
-                                                          float maxPrice) {
+LinkedList<Service> ServiceRepository::searchByPriceRange(long minPrice,
+                                                          long maxPrice) {
     LinkedList<Service> results;
     LinkedList<Service> allServices = getAllServices();
 
     Node<Service> *current = allServices.getHead();
     while (current != nullptr) {
-        float price = current->getData().getPrice();
+        long price = current->getData().getPrice();
         if (price >= minPrice && price <= maxPrice) {
             results.pushBack(current->getData());
         }

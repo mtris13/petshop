@@ -2,8 +2,27 @@
 #include "app/Menu.hpp"
 using namespace std;
 
+// PRIVATE
+bool CartRepository::isAvailableId(const string &petCode, const string &filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open())
+        return false;
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+
+        string id = "";
+        for (int i = 0; i < 4; i++)
+            id += line[i];
+        if (id == petCode)
+            return true;
+    }
+    return false;
+}
+
 // Thêm pet vào giỏ hàng
-void CartRepository::addToCart(const string &clientId, const string &petId, const string &petName, float price) {
+void CartRepository::addToCart(const string &clientId, const string &petId, const string &petName, long price) {
     string filePath = getCartFilePath(clientId);
     ofstream file(filePath, ios::app);
 
@@ -12,7 +31,10 @@ void CartRepository::addToCart(const string &clientId, const string &petId, cons
         return;
     }
 
-    file << petId << "|" << petName << "|" << price << "\n";
+    if (isAvailableId(petId, filePath))
+        return; // đã tồn tại trong giỏ hàng
+
+    file << petId << "|" << petName << "|" << to_string(price) << "\n";
     file.close();
 }
 
@@ -39,7 +61,7 @@ LinkedList<CartItem> CartRepository::getCartItems(const string &clientId) {
         getline(ss, name, '|');
         getline(ss, priceStr, '|');
 
-        items.pushBack(CartItem(id, name, priceStr));
+        items.pushBack(CartItem(id, name, stol(priceStr)));
     }
 
     file.close();
@@ -100,12 +122,12 @@ bool CartRepository::isCartEmpty(const string &clientId) {
 }
 
 // Tính tổng tiền trong giỏ hàng
-float CartRepository::calculateTotal(const string &clientId) {
+long CartRepository::calculateTotal(const string &clientId) {
     LinkedList<CartItem> items = getCartItems(clientId);
-    float total = 0;
+    long total = 0;
     Node<CartItem> *current = items.getHead();
     while (current != nullptr) {
-        total += stof(current->getData().getPrice());
+        total += current->getData().getPrice();
         current = current->getNext();
     }
     return total;
@@ -126,7 +148,7 @@ void CartRepository::displayCart(const string &clientId) {
     cout << string(55, '-') << "\n";
 
     int stt = 1;
-    float total = 0;
+    long total = 0;
     PetRepository petRepo;
     Node<CartItem> *current = items.getHead();
     while (current != nullptr) {
@@ -134,7 +156,7 @@ void CartRepository::displayCart(const string &clientId) {
         if (petRepo.isAvailablePet(petId)) {
             cout << left << setw(5) << stt++ << setw(10) << petId << setw(25) << current->getData().getPetName() << right << setw(15) << fixed << setprecision(0)
                  << current->getData().getPrice() << "\n";
-            total += stof(current->getData().getPrice());
+            total += current->getData().getPrice();
         }
         current = current->getNext();
     }

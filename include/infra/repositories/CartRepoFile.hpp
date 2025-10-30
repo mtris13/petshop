@@ -27,11 +27,13 @@ private:
         return cartFolderPath + clientId + ".txt";
     }
 
+    bool isAvailableId(const string &petCode, const string &filePath);
+
 public:
     CartRepository() {}
 
     // Thêm pet vào giỏ hàng
-    void addToCart(const std::string &clientId, const std::string &petId, const std::string &petName, float price);
+    void addToCart(const std::string &clientId, const std::string &petId, const std::string &petName, long price);
     // Lấy tất cả items trong giỏ hàng
     LinkedList<CartItem> getCartItems(const std::string &clientId);
     // Xóa một item khỏi giỏ hàng
@@ -42,7 +44,7 @@ public:
     bool isCartEmpty(const std::string &clientId);
 
     // Tính tổng tiền trong giỏ hàng
-    float calculateTotal(const std::string &clientId);
+    long calculateTotal(const std::string &clientId);
     // Hiển thị giỏ hàng
     void displayCart(const std::string &clientId);
 };

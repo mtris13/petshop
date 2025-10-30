@@ -143,23 +143,23 @@ LinkedList<std::string> BillRepository::getAllBillIds() {
 }
 
 // Thống kê doanh thu
-float BillRepository::calculateTotalRevenue() {
-    float total = 0;
+long BillRepository::calculateTotalRevenue() {
+    long total = 0;
     // Đọc tất cả bills và tính tổng
     // Simplified version
     return total;
 }
 
 // Thống kê doanh thu từ bán pet
-float BillRepository::calculatePetSalesRevenue() {
-    float total = 0;
+long BillRepository::calculatePetSalesRevenue() {
+    long total = 0;
     // Đọc tất cả bills, lọc items có type = "Pet"
     return total;
 }
 
 // Thống kê doanh thu từ spa
-float BillRepository::calculateSpaRevenue() {
-    float total = 0;
+long BillRepository::calculateSpaRevenue() {
+    long total = 0;
     // Đọc tất cả bills, lọc items có type = "Service"
     return total;
 }

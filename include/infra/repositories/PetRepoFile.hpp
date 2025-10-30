@@ -6,6 +6,7 @@
 #include "domain/entities/Pet.hpp"
 #include "ds/LinkedList.hpp"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -22,6 +23,7 @@ private:
     bool isDogId(const std::string &petCode);
     // --- THÊM HÀM HELPER ĐỂ XÓA DẤU NGOẶC KÉP ---
     std::string trimQuotes(std::string s);
+    std::string toLowercase(std::string &str);
 
 public:
     // GET
@@ -42,4 +44,6 @@ public:
     bool isAvailablePet(const std::string &petCode);
     bool isValidPetId(const std::string &petCode);
     void deletePet(const std::string &petCode);
+    LinkedList<Cat> searchCat(std::string searchType, std::string &keyword);
+    LinkedList<Dog> searchDog(std::string searchType, std::string &keyword);
 };

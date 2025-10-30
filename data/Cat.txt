@@ -1,5 +1,5 @@
 c001|0|Golden|British Shorthair|3|8000000|Short|"Chưa có mô tả."
-c002|1|Cattie|Birman|4|9200000|Long|"Chưa có mô tả."
+c002|0|Cattie|Birman|4|9200000|Long|"Chưa có mô tả."
 c003|1|Luna|Persian|2|10500000|Long|"Chưa có mô tả."
 c004|1|Milo|Siamese|1|7500000|Short|"Chưa có mô tả."
 c005|1|Snowy|Ragdoll|3|9800000|Long|"Chưa có mô tả."

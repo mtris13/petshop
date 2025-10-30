@@ -43,6 +43,10 @@ public:
     Admin getAdminInfo(const string &loginCode);
     Staff getStaffInfo(const string &loginCode);
     Client getClientInfo(const string &loginCode);
+    LinkedList<Admin> getAllAdminInfo();
+    LinkedList<Staff> getAllStaffInfo();
+    LinkedList<Client> getAllClientInfo();
+
     // SET
     void setAdminInfo(const Admin &ad);
     void setStaffInfo(const Staff &st);
