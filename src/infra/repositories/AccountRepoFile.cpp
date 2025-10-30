@@ -353,3 +353,43 @@ void AccountRepository::deleteAccount(const string &loginCode) {
         remove(tempPath.c_str());
     }
 }
+
+AccountStats AccountRepository::countAccount() {
+    AccountStats stats;
+    std::string line;
+
+    std::ifstream adminFile(AdminAccountFilePath);
+    if (adminFile.is_open()) {
+        while (std::getline(adminFile, line)) {
+            if (!line.empty())
+                stats.totalAdmin++;
+        }
+        adminFile.close();
+    } else {
+        std::cerr << "Error: Cannot open " << AdminAccountFilePath << '\n';
+    }
+
+    std::ifstream staffFile(StaffAccountFilePath);
+    if (staffFile.is_open()) {
+        while (std::getline(staffFile, line)) {
+            if (!line.empty())
+                stats.totalStaff++;
+        }
+        staffFile.close();
+    } else {
+        std::cerr << "Error: Cannot open " << StaffAccountFilePath << '\n';
+    }
+
+    std::ifstream clientFile(ClientAccountFilePath);
+    if (clientFile.is_open()) {
+        while (std::getline(clientFile, line)) {
+            if (!line.empty())
+                stats.totalClient++;
+        }
+        clientFile.close();
+    } else {
+        std::cerr << "Error: Cannot open " << ClientAccountFilePath << '\n';
+    }
+
+    return stats;
+}

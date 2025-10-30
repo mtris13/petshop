@@ -89,7 +89,7 @@ bool PetRepository::isDogId(const string &petCode) {
         return true;
     return false;
 }
-string PetRepository::toLowercase(std::string &str) {
+string PetRepository::toLowercase(string &str) {
     for (int i = 0; i < str.length(); i++)
         str[i] = tolower(str[i]);
     return str;
@@ -116,6 +116,56 @@ string PetRepository::getPetStatus(const string &petCode) {
     if (status == "1")
         return "available";
     return "unavailable";
+}
+
+LinkedList<string> PetRepository::getAllCatId() {
+    LinkedList<string> catIds;
+    ifstream file(catFilePath);
+
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << catFilePath << '\n';
+        return catIds;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+
+        stringstream ss(line);
+        string id;
+
+        if (getline(ss, id, '|')) {
+            catIds.pushBack(id);
+        }
+    }
+    file.close();
+    return catIds;
+}
+
+LinkedList<string> PetRepository::getAllDogId() {
+    LinkedList<string> dogIds;
+    ifstream file(dogFilePath);
+
+    if (!file.is_open()) {
+        cerr << "Error: Cant open file " << dogFilePath << '\n';
+        return dogIds;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty())
+            continue;
+
+        stringstream ss(line);
+        string id;
+
+        if (getline(ss, id, '|')) {
+            dogIds.pushBack(id);
+        }
+    }
+    file.close();
+    return dogIds;
 }
 
 Dog PetRepository::getDogInfo(const string &petCode) {
@@ -421,7 +471,43 @@ void PetRepository::deletePet(const string &petCode) {
     }
 }
 
-LinkedList<Dog> PetRepository::searchDog(std::string searchType, std::string &keyword) {
+string PetRepository::generatePetId(string &type) {
+    int maxId = 0;
+    string newId;
+    toLowercase(type);
+    if (type == "dog") {
+        LinkedList<string> dogId = getAllDogId();
+        Node<string> *dog = dogId.getHead();
+        while (dog != nullptr) {
+            string id = dog->getData();
+            int num = stoi(id.substr(1, 3));
+            maxId = max(num, maxId);
+            dog = dog->getNext();
+        }
+        newId = "d";
+    } else {
+        LinkedList<string> catId = getAllCatId();
+        Node<string> *cat = catId.getHead();
+        while (cat != nullptr) {
+            string id = cat->getData();
+            int num = stoi(id.substr(1, 3));
+            maxId = max(num, maxId);
+            cat = cat->getNext();
+        }
+        newId = "c";
+    }
+    // Tạo ID mới
+    maxId++;
+    if (maxId < 10)
+        newId += "00";
+    else if (maxId < 100)
+        newId += "0";
+    newId += to_string(maxId);
+
+    return newId;
+}
+
+LinkedList<Dog> PetRepository::searchDog(string searchType, string &keyword) {
     toLowercase(keyword);
     LinkedList<Dog> dogs;
     ifstream file(dogFilePath); // Giả sử bạn có biến thành viên "dogFilePath"
@@ -499,4 +585,63 @@ LinkedList<Cat> PetRepository::searchCat(string searchType, string &keyword) {
     }
     file.close();
     return cats;
+}
+
+PetStats PetRepository::countPet() {
+    PetStats stats; // Khởi tạo tất cả giá trị = 0
+    string line;
+
+    // ===== DOGS =====
+    // Giả định bạn có biến thành viên "dogFilePath"
+    ifstream dogFile(dogFilePath);
+    if (dogFile.is_open()) {
+        while (getline(dogFile, line)) {
+            if (line.empty())
+                continue;
+
+            stats.totalDogs++;
+
+            stringstream ss(line);
+            string id, status;
+            getline(ss, id, '|');
+            getline(ss, status, '|');
+
+            // Logic đếm của bạn
+            if (status == "1")
+                stats.availableDogs++;
+            else if (status == "0")
+                stats.soldDogs++;
+        }
+        dogFile.close();
+    } else {
+        cerr << "Error: Cannot open " << dogFilePath << '\n';
+    }
+
+    // ===== CATS =====
+    // Giả định bạn có biến thành viên "catFilePath"
+    ifstream catFile(catFilePath);
+    if (catFile.is_open()) {
+        while (getline(catFile, line)) {
+            if (line.empty())
+                continue;
+
+            stats.totalCats++;
+
+            stringstream ss(line);
+            string id, status;
+            getline(ss, id, '|');
+            getline(ss, status, '|');
+
+            // Logic đếm của bạn
+            if (status == "0")
+                stats.soldCats++;
+            else
+                stats.availableCats++;
+        }
+        catFile.close();
+    } else {
+        cerr << "Error: Cannot open " << catFilePath << '\n';
+    }
+
+    return stats;
 }

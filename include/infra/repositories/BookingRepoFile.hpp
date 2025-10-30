@@ -12,69 +12,75 @@
 #include <sstream>
 #include <string>
 
+struct PetSalesData {
+    long revenue = 0;
+    int soldCount = 0;
+};
+
 class BookingRepository {
 private:
-  const string bookingFilePath = "../data/bookings.txt";
-  const string invalid = "";
+    const string bookingFilePath = "../data/bookings.txt";
+    const string invalid = "";
 
-  // Helper: đọc một dòng dữ liệu theo bookingId
-  string readingFile(const string &bookingId);
+    // Helper: đọc một dòng dữ liệu theo bookingId
+    string readingFile(const string &bookingId);
 
-  // Helper: ghi/cập nhật một dòng dữ liệu
-  void writingFile(const string &bookingId, const string &writeLine);
+    // Helper: ghi/cập nhật một dòng dữ liệu
+    void writingFile(const string &bookingId, const string &writeLine);
 
 public:
-  BookingRepository() {}
+    BookingRepository() {}
 
-  // ===== GET Operations =====
+    // ===== GET Operations =====
 
-  // Lấy thông tin đầy đủ của một booking
-  Booking getBookingInfo(const string &bookingId);
+    // Lấy thông tin đầy đủ của một booking
+    Booking getBookingInfo(const string &bookingId);
 
-  // Lấy tất cả bookings
-  LinkedList<Booking> getAllBookings();
+    // Lấy tất cả bookings
+    LinkedList<Booking> getAllBookings();
 
-  // Lấy bookings của một client
-  LinkedList<Booking> getBookingsByClient(const string &clientId);
+    // Lấy bookings của một client
+    LinkedList<Booking> getBookingsByClient(const string &clientId);
 
-  // Lấy bookings theo ngày
-  LinkedList<Booking> getBookingsByDate(const string &date);
+    // Lấy bookings theo ngày
+    LinkedList<Booking> getBookingsByDate(const string &date);
 
-  // Lấy bookings theo trạng thái
-  LinkedList<Booking> getBookingsByStatus(const string &status);
+    // Lấy bookings theo trạng thái
+    LinkedList<Booking> getBookingsByStatus(const string &status);
 
-  // ===== SET Operations =====
+    // ===== SET Operations =====
 
-  // Tạo booking mới
-  void createBooking(const Booking &booking);
+    // Tạo booking mới
+    void createBooking(const Booking &booking);
 
-  // Cập nhật trạng thái booking
-  void updateStatus(const string &bookingId, const string &newStatus);
+    // Cập nhật trạng thái booking
+    void updateStatus(const string &bookingId, const string &newStatus);
 
-  // Cập nhật thông tin booking
-  void updateBooking(const Booking &booking);
+    // Cập nhật thông tin booking
+    void updateBooking(const Booking &booking);
 
-  // ===== CHECK Operations =====
+    // ===== CHECK Operations =====
 
-  // Kiểm tra bookingId có tồn tại không
-  bool isValidBookingId(const string &bookingId);
+    // Kiểm tra bookingId có tồn tại không
+    bool isValidBookingId(const string &bookingId);
 
-  // Kiểm tra thời gian đã được đặt chưa (tránh trùng lặp)
-  bool isTimeSlotAvailable(const string &date, const string &time);
+    // Kiểm tra thời gian đã được đặt chưa (tránh trùng lặp)
+    bool isTimeSlotAvailable(const string &date, const string &time);
 
-  // ===== DELETE Operation =====
+    // ===== DELETE Operation =====
 
-  // Xóa booking (hủy lịch)
-  void deleteBooking(const string &bookingId);
+    // Xóa booking (hủy lịch)
+    void deleteBooking(const string &bookingId);
 
-  // ===== UTILITY =====
+    // ===== UTILITY =====
 
-  // Sinh booking ID tự động
-  string generateBookingId();
+    // Sinh booking ID tự động
+    string generateBookingId();
 
-  // Đếm tổng số bookings
-  int countBookings();
+    // Đếm tổng số bookings
+    int countBookings();
 
-  // Đếm bookings theo trạng thái
-  int countBookingsByStatus(const string &status);
+    // Đếm bookings theo trạng thái
+    int countBookingsByStatus(const string &status);
+    PetSalesData getPetSalesData();
 };

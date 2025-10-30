@@ -20,6 +20,12 @@ Service:
 #include <sstream>
 #include <string>
 
+struct AccountStats {
+    int totalAdmin = 0;
+    int totalStaff = 0;
+    int totalClient = 0;
+};
+
 class AccountRepository {
 private:
     const string AdminAccountFilePath = "../data/AdminAccount.txt";
@@ -57,4 +63,5 @@ public:
     bool isValidPassword(const string &loginCode, const string &attemptPassword);
     void deleteAccount(const string &loginCode);
     Account *findAccountById(const string &loginCode);
+    AccountStats countAccount();
 };
