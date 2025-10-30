@@ -37,8 +37,7 @@ string AccountRepository::readingFile(const string &loginCode) {
     return invalid;
 }
 
-void AccountRepository::writingFile(const string &loginCode,
-                                    const string &writeLine) {
+void AccountRepository::writingFile(const string &loginCode, const string &writeLine) {
     const string path = filePath(loginCode);
     if (path == invalid) {
         cerr << "Error: Invalid file path for loginCode " << loginCode << '\n';
@@ -119,6 +118,58 @@ string AccountRepository::getAccountPassword(const string &loginCode) {
     getline(ss, username, '|');
     getline(ss, pw, '|');
     return pw;
+}
+
+string AccountRepository::generateAccountId(string &type) {
+    int maxId = 0;
+    string newId = "";
+
+    if (type == "admin") {
+        LinkedList<Admin> allAdmins = getAllAdminInfo();
+        Node<Admin> *current = allAdmins.getHead();
+
+        while (current != nullptr) {
+            string id = current->getData().getId();
+            try {
+                maxId = max(maxId, stoi(id));
+            } catch (...) { /* Bỏ qua nếu ID bị lỗi */
+            }
+            current = current->getNext();
+        }
+
+        maxId++;
+        if (maxId < 10)
+            newId += "00";
+        else if (maxId < 100)
+            newId += "0";
+        newId += to_string(maxId);
+
+    } else if (type == "staff") {
+        LinkedList<Staff> allStaff = getAllStaffInfo();
+        Node<Staff> *current = allStaff.getHead();
+
+        while (current != nullptr) {
+            string id = current->getData().getId();
+            try {
+                int num = stoi(id.substr(2, 3));
+                maxId = max(maxId, num);
+            } catch (...) { /* Bỏ qua nếu ID bị lỗi */
+            }
+            current = current->getNext();
+        }
+
+        maxId++;
+        newId = "SV";
+        if (maxId < 10)
+            newId += "00"; // Đệm "00"
+        else if (maxId < 100)
+            newId += "0"; // Đệm "0"
+        newId += to_string(maxId);
+
+    } else {
+        return "INVALID_TYPE";
+    }
+    return newId;
 }
 
 // GET

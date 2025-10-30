@@ -64,4 +64,5 @@ public:
     void deleteAccount(const string &loginCode);
     Account *findAccountById(const string &loginCode);
     AccountStats countAccount();
+    string generateAccountId(string &type);
 };

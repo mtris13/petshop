@@ -45,7 +45,7 @@ private:
                 viewAllAccounts();
                 break;
             case 2:
-                addStaffAccount();
+                addAccount();
                 break;
             case 3:
                 updateAccount();
@@ -127,38 +127,35 @@ private:
         cout << "Total: " << count << " client(s)\n";
     }
 
-    void addStaffAccount() {
-        Menu::displayHeader("ADD STAFF ACCOUNT");
+    void addAccount() {
+        Menu::displayHeader("ADD ACCOUNT");
+        cout << "1. Add Admin's account.\n";
+        cout << "2. Add Staff's account.\n";
+        cout << "Enter your choice: ";
+        string type;
+        cin >> type;
+        type = (type == "1") ? "admin" : "staff";
 
         string id, name, password, gender;
         long salary;
-
-        cout << "Enter Staff ID (5 characters, e.g., SV001): ";
-        cin >> id;
-        cin.ignore();
-
-        if (id.length() != StaffIdLength) {
-            Menu::displayError("Staff ID must be exactly 5 characters!");
-            return;
-        }
-
-        if (accountRepo.isValidId(id)) {
-            Menu::displayError("Staff ID already exists!");
-            return;
-        }
-
+        id = accountRepo.generateAccountId(type);
+        cout << "Your new account's ID is: " << id << "\n";
         cout << "Enter Name: ";
+        cin.ignore();
         getline(cin, name);
         cout << "Enter Password: ";
         cin >> password;
         cout << "Enter Gender (male/female): ";
         cin >> gender;
-        cout << "Enter Salary: ";
-        cin >> salary;
-
-        Staff newStaff(id, name, password, gender, salary);
-        accountRepo.setStaffInfo(newStaff);
-
+        if (type == "admin") {
+            Admin admin(id, name, password, gender);
+            accountRepo.setAdminInfo(admin);
+        } else {
+            cout << "Enter Salary: ";
+            cin >> salary;
+            Staff newStaff(id, name, password, gender, salary);
+            accountRepo.setStaffInfo(newStaff);
+        }
         Menu::displaySuccess("Staff account created successfully!");
     }
 
@@ -244,39 +241,41 @@ private:
             accountRepo.setStaffInfo(staff);
 
         } else if (length == ClientIdLength) { // Client
-            Client client = accountRepo.getClientInfo(id);
-            cout << "\nCurrent Info:\n"
-                 << "Name: " << client.getName() << "\n"
-                 << "Gender: " << client.getGender() << "\n"
-                 << "Address: " << client.getStreet() << ", " << client.getCity() << "\n";
+            cout << "You are not able to update client's account!\n";
 
-            cout << "\nEnter New Name (or press Enter to keep): ";
-            getline(cin, name);
-            if (!name.empty())
-                client.setName(name);
+            // Client client = accountRepo.getClientInfo(id);
+            // cout << "\nCurrent Info:\n"
+            //      << "Name: " << client.getName() << "\n"
+            //      << "Gender: " << client.getGender() << "\n"
+            //      << "Address: " << client.getStreet() << ", " << client.getCity() << "\n";
 
-            cout << "Enter New Password (or press Enter to keep): ";
-            getline(cin, password);
-            if (!password.empty())
-                client.setPassword(password);
+            // cout << "\nEnter New Name (or press Enter to keep): ";
+            // getline(cin, name);
+            // if (!name.empty())
+            //     client.setName(name);
 
-            cout << "Enter New Gender (or press Enter to keep): ";
-            getline(cin, gender);
-            if (!gender.empty())
-                client.setGender(gender);
+            // cout << "Enter New Password (or press Enter to keep): ";
+            // getline(cin, password);
+            // if (!password.empty())
+            //     client.setPassword(password);
 
-            string street, city;
-            cout << "Enter New Street (or press Enter to keep): ";
-            getline(cin, street);
-            if (!street.empty())
-                client.setStreet(street);
+            // cout << "Enter New Gender (or press Enter to keep): ";
+            // getline(cin, gender);
+            // if (!gender.empty())
+            //     client.setGender(gender);
 
-            cout << "Enter New City (or press Enter to keep): ";
-            getline(cin, city);
-            if (!city.empty())
-                client.setCity(city);
+            // string street, city;
+            // cout << "Enter New Street (or press Enter to keep): ";
+            // getline(cin, street);
+            // if (!street.empty())
+            //     client.setStreet(street);
 
-            accountRepo.setClientInfo(client);
+            // cout << "Enter New City (or press Enter to keep): ";
+            // getline(cin, city);
+            // if (!city.empty())
+            //     client.setCity(city);
+
+            // accountRepo.setClientInfo(client);
         }
 
         Menu::displaySuccess("Account updated successfully!");
@@ -380,9 +379,11 @@ private:
             case 4:
                 deletePet();
                 break;
-            case 5:
+            case 5: {
+                viewAllPets();
                 searchPet();
                 break;
+            }
             case 0:
                 break;
             default:
@@ -466,7 +467,7 @@ private:
         while (true) {
             type = (type == "1") ? "dog" : "cat";
             id = petRepo.generatePetId(type);
-            cout << "This pet's ID is: " << id;
+            cout << "This pet's ID is: " << id << "\n";
 
             cout << "Enter Name: ";
             getline(cin, name);
@@ -481,7 +482,7 @@ private:
             cin.ignore();
             getline(cin, desc);
 
-            if (type == "1") {
+            if (type == "dog") {
                 int energy;
                 cout << "Enter Energy Level (1-10): ";
                 cin >> energy;
@@ -495,7 +496,7 @@ private:
                 petRepo.setDogInfo(newDog);
                 Menu::displaySuccess("Dog added successfully!");
                 cout << newDog;
-            } else if (type == "2") {
+            } else if (type == "cat") {
                 string furLength;
                 cout << "Enter Fur Length (Short/Medium/Long): ";
                 cin >> furLength;

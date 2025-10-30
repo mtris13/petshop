@@ -1,2 +1,3 @@
 001|Hanh Nguyen|000|female
 002|Minh Tri|000|male
+003|Cherry|000|female
