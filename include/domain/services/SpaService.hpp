@@ -96,7 +96,7 @@ public:
 
         Service service = serviceRepo.getServiceInfo(serviceId);
         cout << "\n";
-        service.showInfo();
+        cout << service;
     }
 
     // ===== 2. ĐẶT LỊCH SPA =====

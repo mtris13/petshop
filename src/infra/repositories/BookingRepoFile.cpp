@@ -31,8 +31,7 @@ string BookingRepository::readingFile(const string &bookingId) {
     return invalid;
 }
 
-void BookingRepository::writingFile(const string &bookingId,
-                                    const string &writeLine) {
+void BookingRepository::writingFile(const string &bookingId, const string &writeLine) {
     const string tempPath = "../data/temp.txt";
 
     ifstream in(bookingFilePath);
@@ -141,8 +140,7 @@ LinkedList<Booking> BookingRepository::getAllBookings() {
     return bookings;
 }
 
-LinkedList<Booking>
-BookingRepository::getBookingsByClient(const string &clientId) {
+LinkedList<Booking> BookingRepository::getBookingsByClient(const string &clientId) {
     LinkedList<Booking> results;
     LinkedList<Booking> allBookings = getAllBookings();
 
@@ -172,8 +170,7 @@ LinkedList<Booking> BookingRepository::getBookingsByDate(const string &date) {
     return results;
 }
 
-LinkedList<Booking>
-BookingRepository::getBookingsByStatus(const string &status) {
+LinkedList<Booking> BookingRepository::getBookingsByStatus(const string &status) {
     LinkedList<Booking> results;
     LinkedList<Booking> allBookings = getAllBookings();
 
@@ -294,9 +291,7 @@ string BookingRepository::generateBookingId() {
         string id = current->getData().getBookingId();
         if (id.length() >= 2 && id.substr(0, 2) == "BK") {
             int num = stoi(id.substr(2));
-            if (num > maxNum) {
-                maxNum = num;
-            }
+            maxNum = max(maxNum, num);
         }
         current = current->getNext();
     }

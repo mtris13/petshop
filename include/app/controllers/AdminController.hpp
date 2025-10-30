@@ -452,7 +452,7 @@ private:
     void addNewPet() {
         Menu::displayHeader("ADD NEW PET");
 
-        int type;
+        string type;
         cout << "Pet Type:\n";
         cout << "1. Dog\n";
         cout << "2. Cat\n";
@@ -464,17 +464,9 @@ private:
         int age;
         long price;
         while (true) {
-            cout << "Enter Pet ID (e.g. 001): ";
-            cin >> id;
-            cin.ignore();
-            if (type == 1)
-                id = "d" + id;
-            else
-                id = "c" + id;
-            if (petRepo.isValidPetId(id)) {
-                Menu::displayError("Pet ID already exists!");
-                continue;
-            }
+            type = (type == "1") ? "dog" : "cat";
+            id = petRepo.generatePetId(type);
+            cout << "This pet's ID is: " << id;
 
             cout << "Enter Name: ";
             getline(cin, name);
@@ -489,7 +481,7 @@ private:
             cin.ignore();
             getline(cin, desc);
 
-            if (type == 1) {
+            if (type == "1") {
                 int energy;
                 cout << "Enter Energy Level (1-10): ";
                 cin >> energy;
@@ -503,7 +495,7 @@ private:
                 petRepo.setDogInfo(newDog);
                 Menu::displaySuccess("Dog added successfully!");
                 cout << newDog;
-            } else if (type == 2) {
+            } else if (type == "2") {
                 string furLength;
                 cout << "Enter Fur Length (Short/Medium/Long): ";
                 cin >> furLength;
@@ -515,6 +507,7 @@ private:
             } else {
                 Menu::displayError("Invalid pet type!");
             }
+            break;
         }
     }
 
@@ -933,68 +926,59 @@ private:
             cout << "1. Account Statistics\n";
             cout << "2. Pet Inventory Statistics\n";
             cout << "3. Spa Service Statistics\n";
-            cout << "4. Revenue Statistics\n";
             cout << "0. Back\n";
             cout << "==============================\n";
             cout << "Enter your choice: ";
             cin >> choice;
-            cin.ignore(); // tránh lỗi khi nhập chuỗi sau đó
-
+            if (cin.fail()) { // Nếu người dùng nhập chữ
+                cin.clear();  // 1. Sửa trạng thái lỗi
+                choice = -1;  // 2. Gán số -1 (để chạy default)
+            }
+            // 3. Luôn dọn dẹp phím Enter và chữ thừa
+            cin.ignore();
             switch (choice) {
             case 1: {
-                cout << "\n========== ACCOUNTS ==========\n";
-                int adminCount = 0, staffCount = 0, clientCount = 0;
+                Menu::displayHeader("ACCOUNT STATISTICS");
 
-                ifstream adminFile("../data/AdminAccount.txt");
-                if (adminFile.is_open()) {
-                    string line;
-                    while (getline(adminFile, line))
-                        if (!line.empty())
-                            adminCount++;
-                    adminFile.close();
-                }
+                AccountStats counts = accountRepo.countAccount();
+                int totalAll = counts.totalAdmin + counts.totalStaff + counts.totalClient;
 
-                ifstream staffFile("../data/StaffAccount.txt");
-                if (staffFile.is_open()) {
-                    string line;
-                    while (getline(staffFile, line))
-                        if (!line.empty())
-                            staffCount++;
-                    staffFile.close();
-                }
+                cout << "\n========== ACCOUNT TOTALS ==========\n";
+                cout << "Admin Accounts:   " << counts.totalAdmin << "\n";
+                cout << "Staff Accounts:   " << counts.totalStaff << "\n";
+                cout << "Client Accounts:  " << counts.totalClient << "\n\n";
 
-                ifstream clientFile("../data/ClientAccount.txt");
-                if (clientFile.is_open()) {
-                    string line;
-                    while (getline(clientFile, line))
-                        if (!line.empty())
-                            clientCount++;
-                    clientFile.close();
-                }
-
-                cout << "Admins: " << adminCount << "\n";
-                cout << "Staff: " << staffCount << "\n";
-                cout << "Clients: " << clientCount << "\n";
-                cout << "Total Users: " << (adminCount + staffCount + clientCount)
-                     << "\n";
+                cout << "Overall:\n";
+                cout << "  Total Accounts: " << totalAll << "\n";
+                cout << "======================================\n";
                 break;
             }
+            case 2: {
+                PetStats stats = petRepo.countPet();
 
-            case 2:
-                cout << "\n========== PET INVENTORY ==========\n";
-                calculatePetSalesStats();
+                cout << "\n========== PET SALES STATISTICS ==========\n";
+                cout << "Dogs:\n";
+                cout << "  Total: " << stats.totalDogs << "\n";
+                cout << "  Available: " << stats.availableDogs << "\n";
+                cout << "  Sold: " << stats.soldDogs << "\n\n";
+
+                cout << "Cats:\n";
+                cout << "  Total: " << stats.totalCats << "\n";
+                cout << "  Available: " << stats.availableCats << "\n";
+                cout << "  Sold: " << stats.soldCats << "\n\n";
+
+                cout << "Overall:\n";
+                cout << "  Total Pets: " << (stats.totalDogs + stats.totalCats) << "\n";
+                cout << "  Total Available: " << (stats.availableDogs + stats.availableCats) << "\n";
+                cout << "  Total Sold: " << (stats.soldDogs + stats.soldCats) << "\n";
+                cout << "==========================================\n";
                 break;
-
-            case 3:
+            }
+            case 3: {
                 cout << "\n========== SPA SERVICES ==========\n";
                 spaService.showStatistics();
                 break;
-
-            case 4:
-                cout << "\n========== REVENUE STATISTICS ==========\n";
-                calculateRevenueStats();
-                break;
-
+            }
             case 0:
                 break;
 
@@ -1010,199 +994,119 @@ private:
         } while (choice != 0);
     }
 
-    void calculatePetSalesStats() {
-        int totalDogs = 0, soldDogs = 0, availableDogs = 0;
-        int totalCats = 0, soldCats = 0, availableCats = 0;
+    // =============== QUẢN LÝ DOANH THHU ==========
+    // void calculateRevenueStats() {
+    //     // ===== SPA REVENUE =====
+    //     long spaRevenue = 0;
+    //     LinkedList<Booking> allBookings = bookingRepo.getAllBookings();
+    //     Node<Booking> *current = allBookings.getHead();
 
-        // ===== DOGS =====
-        ifstream dogFile("../data/Dog.txt");
-        if (dogFile.is_open()) {
-            string line;
-            while (getline(dogFile, line)) {
-                if (line.empty())
-                    continue;
+    //     while (current != nullptr) {
+    //         const Booking &booking = current->getData();
+    //         if (booking.getStatus() == "Completed") {
+    //             string serviceId = booking.getServiceId();
+    //             long price = serviceRepo.getServicePrice(serviceId);
+    //             spaRevenue += price;
+    //         }
+    //         current = current->getNext();
+    //     }
 
-                totalDogs++;
+    //     // ===== PET SALES REVENUE =====
+    //     long petRevenue = 0;
+    //     int soldPetsCount = 0;
 
-                // Tách dữ liệu bằng delimiter '|'
-                stringstream ss(line);
-                string id, status, name, breed, age, price, energy;
-                getline(ss, id, '|');
-                getline(ss, status, '|');
-                getline(ss, name, '|');
-                getline(ss, breed, '|');
-                getline(ss, age, '|');
-                getline(ss, price, '|');
-                getline(ss, energy, '|');
+    //     // --- Dogs ---
+    //     ifstream dogFile("../data/Dog.txt");
+    //     if (dogFile.is_open()) {
+    //         string line;
+    //         while (getline(dogFile, line)) {
+    //             if (line.empty())
+    //                 continue;
 
-                if (status == "1")
-                    availableDogs++;
-                else if (status == "0")
-                    soldDogs++;
-            }
-            dogFile.close();
-        } else {
-            cout << "Error: Cannot open Dog.txt\n";
-        }
+    //             stringstream ss(line);
+    //             string id, status, name, breed, age, price, energy;
 
-        // ===== CATS =====
-        ifstream catFile("../data/Cat.txt");
-        if (catFile.is_open()) {
-            string line;
-            while (getline(catFile, line)) {
-                if (line.empty())
-                    continue;
+    //             getline(ss, id, '|');
+    //             getline(ss, status, '|');
+    //             getline(ss, name, '|');
+    //             getline(ss, breed, '|');
+    //             getline(ss, age, '|');
+    //             getline(ss, price, '|');
+    //             getline(ss, energy, '|');
 
-                totalCats++;
+    //             if (status == "0") { // sold
+    //                 try {
+    //                     petRevenue += stof(price);
+    //                     soldPetsCount++;
+    //                 } catch (...) {
+    //                     cerr << "Warning: Invalid price for dog " << id << "\n";
+    //                 }
+    //             }
+    //         }
+    //         dogFile.close();
+    //     } else {
+    //         cerr << "Error: Cannot open Dog.txt\n";
+    //     }
 
-                // Tách dữ liệu bằng delimiter '|'
-                stringstream ss(line);
-                string id, status, name, breed, age, price, fur;
+    //     // --- Cats ---
+    //     ifstream catFile("../data/Cat.txt");
+    //     if (catFile.is_open()) {
+    //         string line;
+    //         while (getline(catFile, line)) {
+    //             if (line.empty())
+    //                 continue;
 
-                getline(ss, id, '|');
-                getline(ss, status,
-                        '|'); // Nếu Cat.txt chưa có status, thêm xử lý dự phòng
+    //             stringstream ss(line);
+    //             string id, status, name, breed, age, price, fur;
 
-                if (status == "0")
-                    soldCats++;
-                else
-                    availableCats++;
-            }
-            catFile.close();
-        } else {
-            cout << "Error: Cannot open Cat.txt\n";
-        }
+    //             getline(ss, id, '|');
+    //             getline(ss, status, '|'); // nếu chưa có status thì vẫn đọc rỗng
+    //             getline(ss, name, '|');
+    //             getline(ss, breed, '|');
+    //             getline(ss, age, '|');
+    //             getline(ss, price, '|');
+    //             getline(ss, fur, '|');
 
-        cout << "\n========== PET SALES STATISTICS ==========\n";
-        cout << "Dogs:\n";
-        cout << "  Total: " << totalDogs << "\n";
-        cout << "  Available: " << availableDogs << "\n";
-        cout << "  Sold: " << soldDogs << "\n\n";
+    //             if (status == "0") { // sold
+    //                 try {
+    //                     petRevenue += stof(price);
+    //                     soldPetsCount++;
+    //                 } catch (...) {
+    //                     cerr << "Warning: Invalid price for cat " << id << "\n";
+    //                 }
+    //             }
+    //         }
+    //         catFile.close();
+    //     } else {
+    //         cerr << "Error: Cannot open Cat.txt\n";
+    //     }
 
-        cout << "Cats:\n";
-        cout << "  Total: " << totalCats << "\n";
-        cout << "  Available: " << availableCats << "\n";
-        cout << "  Sold: " << soldCats << "\n\n";
+    //     // ===== TOTAL =====
+    //     long totalRevenue = spaRevenue + petRevenue;
 
-        cout << "Overall:\n";
-        cout << "  Total Pets: " << (totalDogs + totalCats) << "\n";
-        cout << "  Total Available: " << (availableDogs + availableCats) << "\n";
-        cout << "  Total Sold: " << (soldDogs + soldCats) << "\n";
-        cout << "==========================================\n";
-    }
+    //     cout << "\n========== REVENUE REPORT ==========\n";
+    //     cout << "Pet Sales:\n";
+    //     cout << "  Pets Sold: " << soldPetsCount << "\n";
+    //     cout << "  Revenue: " << fixed << setprecision(0) << petRevenue
+    //          << " VND\n\n";
 
-    void calculateRevenueStats() {
-        // ===== SPA REVENUE =====
-        long spaRevenue = 0;
-        LinkedList<Booking> allBookings = bookingRepo.getAllBookings();
-        Node<Booking> *current = allBookings.getHead();
+    //     cout << "Spa Services:\n";
+    //     cout << "  Revenue: " << spaRevenue << " VND\n\n";
 
-        while (current != nullptr) {
-            const Booking &booking = current->getData();
-            if (booking.getStatus() == "Completed") {
-                string serviceId = booking.getServiceId();
-                long price = serviceRepo.getServicePrice(serviceId);
-                spaRevenue += price;
-            }
-            current = current->getNext();
-        }
+    //     cout << "----------------------------------------\n";
+    //     cout << "TOTAL REVENUE: " << totalRevenue << " VND\n";
+    //     cout << "----------------------------------------\n";
 
-        // ===== PET SALES REVENUE =====
-        long petRevenue = 0;
-        int soldPetsCount = 0;
+    //     // Breakdown percentages
+    //     if (totalRevenue > 0) {
+    //         cout << "\nRevenue Breakdown:\n";
+    //         cout << "  Pet Sales: " << fixed << setprecision(1)
+    //              << (petRevenue / totalRevenue * 100) << "%\n";
+    //         cout << "  Spa Services: " << (spaRevenue / totalRevenue * 100) << "%\n";
+    //     }
 
-        // --- Dogs ---
-        ifstream dogFile("../data/Dog.txt");
-        if (dogFile.is_open()) {
-            string line;
-            while (getline(dogFile, line)) {
-                if (line.empty())
-                    continue;
-
-                stringstream ss(line);
-                string id, status, name, breed, age, price, energy;
-
-                getline(ss, id, '|');
-                getline(ss, status, '|');
-                getline(ss, name, '|');
-                getline(ss, breed, '|');
-                getline(ss, age, '|');
-                getline(ss, price, '|');
-                getline(ss, energy, '|');
-
-                if (status == "0") { // sold
-                    try {
-                        petRevenue += stof(price);
-                        soldPetsCount++;
-                    } catch (...) {
-                        cerr << "Warning: Invalid price for dog " << id << "\n";
-                    }
-                }
-            }
-            dogFile.close();
-        } else {
-            cerr << "Error: Cannot open Dog.txt\n";
-        }
-
-        // --- Cats ---
-        ifstream catFile("../data/Cat.txt");
-        if (catFile.is_open()) {
-            string line;
-            while (getline(catFile, line)) {
-                if (line.empty())
-                    continue;
-
-                stringstream ss(line);
-                string id, status, name, breed, age, price, fur;
-
-                getline(ss, id, '|');
-                getline(ss, status, '|'); // nếu chưa có status thì vẫn đọc rỗng
-                getline(ss, name, '|');
-                getline(ss, breed, '|');
-                getline(ss, age, '|');
-                getline(ss, price, '|');
-                getline(ss, fur, '|');
-
-                if (status == "0") { // sold
-                    try {
-                        petRevenue += stof(price);
-                        soldPetsCount++;
-                    } catch (...) {
-                        cerr << "Warning: Invalid price for cat " << id << "\n";
-                    }
-                }
-            }
-            catFile.close();
-        } else {
-            cerr << "Error: Cannot open Cat.txt\n";
-        }
-
-        // ===== TOTAL =====
-        long totalRevenue = spaRevenue + petRevenue;
-
-        cout << "\n========== REVENUE REPORT ==========\n";
-        cout << "Pet Sales:\n";
-        cout << "  Pets Sold: " << soldPetsCount << "\n";
-        cout << "  Revenue: " << fixed << setprecision(0) << petRevenue
-             << " VND\n\n";
-
-        cout << "Spa Services:\n";
-        cout << "  Revenue: " << spaRevenue << " VND\n\n";
-
-        cout << "----------------------------------------\n";
-        cout << "TOTAL REVENUE: " << totalRevenue << " VND\n";
-        cout << "----------------------------------------\n";
-
-        // Breakdown percentages
-        if (totalRevenue > 0) {
-            cout << "\nRevenue Breakdown:\n";
-            cout << "  Pet Sales: " << fixed << setprecision(1)
-                 << (petRevenue / totalRevenue * 100) << "%\n";
-            cout << "  Spa Services: " << (spaRevenue / totalRevenue * 100) << "%\n";
-        }
-
-        cout << "========================================\n";
-    }
+    //     cout << "========================================\n";
+    // }
 
 public:
     AdminController(Admin *admin) : currentAdmin(admin) {}

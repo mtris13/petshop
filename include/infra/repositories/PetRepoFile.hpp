@@ -10,6 +10,15 @@
 #include <sstream>
 #include <string>
 
+struct PetStats {
+    int totalDogs = 0;
+    int soldDogs = 0;
+    int availableDogs = 0;
+    int totalCats = 0;
+    int soldCats = 0;
+    int availableCats = 0;
+};
+
 class PetRepository {
 private:
     const std::string catFilePath = "../data/Cat.txt";
@@ -30,6 +39,8 @@ public:
     std::string getPetStatus(const std::string &petCode);
     Dog getDogInfo(const std::string &petCode);
     Cat getCatInfo(const std::string &petCode);
+    LinkedList<std::string> getAllCatId();
+    LinkedList<std::string> getAllDogId();
     LinkedList<Cat> getAllCatInfo();
     LinkedList<Dog> getAllDogInfo();
     LinkedList<Cat> getAllCatInfoAvailable();
@@ -44,6 +55,8 @@ public:
     bool isAvailablePet(const std::string &petCode);
     bool isValidPetId(const std::string &petCode);
     void deletePet(const std::string &petCode);
+    std::string generatePetId(std::string &type);
     LinkedList<Cat> searchCat(std::string searchType, std::string &keyword);
     LinkedList<Dog> searchDog(std::string searchType, std::string &keyword);
+    PetStats countPet();
 };
