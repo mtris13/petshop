@@ -16,7 +16,9 @@ private:
 
 public:
     Bill() : billId(""), clientId(""), clientName(""), totalAmount(0), date(""), time("") {}
-
+    ~Bill() {
+        std::cout << "Goi ham huy Bill, xoa items..." << std::endl;
+    }
     Bill(const std::string &id, const std::string &cId, const std::string &cName, const std::string &d, const std::string &t)
         : billId(id), clientId(cId), clientName(cName), totalAmount(0), date(d), time(t) {}
 
@@ -39,7 +41,7 @@ public:
     // Thêm item vào hóa đơn
     void addItem(const BillItem &item) {
         items.pushBack(item);
-        totalAmount += item.getPrice(); // Mỗi pet chỉ có số lượng là 1
+        totalAmount += item.getPrice(); // Mỗi item chỉ có số lượng là 1
     }
 
     // Tính lại tổng tiền
@@ -56,13 +58,13 @@ public:
     // Hiển thị hóa đơn
     void display() const {
         std::cout << "\n========================================\n";
-        std::cout << "           HOA DON BAN HANG             \n";
+        std::cout << "                       BILL             \n";
         std::cout << "========================================\n";
-        std::cout << "Ma hoa don: " << billId << "\n";
-        std::cout << "Khach hang: " << clientName << " (" << clientId << ")\n";
-        std::cout << "Ngay: " << date << " " << time << "\n";
+        std::cout << "Bill ID: " << billId << "\n";
+        std::cout << "Client: " << clientName << " (" << clientId << ")\n";
+        std::cout << "Date: " << date << " " << time << "\n";
         std::cout << "----------------------------------------\n";
-        std::cout << "STT | Ten san pham         | Gia      \n";
+        std::cout << "STT |    Product            | Gia      \n";
         std::cout << "----------------------------------------\n";
 
         int stt = 1;
@@ -73,9 +75,9 @@ public:
         }
 
         std::cout << "----------------------------------------\n";
-        std::cout << "Tong cong: " << totalAmount << " VND\n";
+        std::cout << "Total: " << totalAmount << " VND\n";
         std::cout << "========================================\n";
-        std::cout << "      Cam on quy khach!                 \n";
+        std::cout << "        Thank you for choosing us!      \n";
         std::cout << "========================================\n";
     }
 };

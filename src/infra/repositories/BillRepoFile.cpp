@@ -31,7 +31,6 @@ string BillRepository::generateBillId() {
         checkFile >> maxNum;
         checkFile.close();
     }
-
     maxNum++;
 
     // Lưu lại counter
@@ -57,15 +56,15 @@ void BillRepository::saveBill(const Bill &bill) {
     // Header
     file << "========================================\n";
     file << "           HOA DON BAN HANG             \n";
-    file << "            TISU PETSHOP                \n";
+    file << "             DUT PETSHOP                \n";
     file << "========================================\n";
-    file << "Ma hoa don: " << bill.getBillId() << "\n";
-    file << "Khach hang: " << bill.getClientName() << "\n";
-    file << "ID: " << bill.getClientId() << "\n";
-    file << "Ngay: " << bill.getDate() << "\n";
-    file << "Gio: " << bill.getTime() << "\n";
+    file << "Bill ID: " << bill.getBillId() << "\n";
+    file << "Client Name: " << bill.getClientId() << "\n";
+    file << "Phone Number: " << bill.getClientId() << "\n";
+    file << "Date: " << bill.getDate() << "\n";
+    file << "Time: " << bill.getTime() << "\n";
     file << "----------------------------------------\n";
-    file << "Chi tiet don hang:\n";
+    file << "DETAILS:\n";
     file << "----------------------------------------\n";
 
     // Items
@@ -74,10 +73,8 @@ void BillRepository::saveBill(const Bill &bill) {
     while (item != nullptr) {
         file << stt++ << ". " << item->getData().getItemName() << " (" << item->getData().getItemType() << ")\n";
         file << "   ID: " << item->getData().getItemId() << "\n";
-        file << "   Gia: " << fixed << setprecision(0) << item->getData().getPrice() << " VND\n";
-        // if (item.quantity > 1) {
-        //     file << "   So luong: " << item.quantity << "\n";
-        // }
+        file << "   Gia: " << item->getData().getPrice() << " VND\n";
+        file << "   Breed: " << item->getData().getItemType() << "\n";
         file << "\n";
         item = item->getNext();
     }

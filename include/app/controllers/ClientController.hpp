@@ -242,8 +242,7 @@ private:
         }
 
         // Tạo hóa đơn
-        Bill bill = billRepo.createBillFromCart(
-            currentClient->getId(), currentClient->getName(), billItems);
+        Bill bill = billRepo.createBillFromCart(currentClient->getId(), currentClient->getName(), billItems);
 
         // Lưu hóa đơn
         billRepo.saveBill(bill);

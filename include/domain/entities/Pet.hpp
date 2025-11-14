@@ -20,22 +20,22 @@ public:
     virtual ~Pet() = default;
 
     // Getter
-    std::string getId() const { return id; }
-    std::string getName() const { return name; }
-    std::string getBreed() const { return breed; }
-    int getAge() const { return age; }
-    long getPrice() const { return price; }
+    virtual std::string getId() const { return id; }
+    virtual std::string getName() const { return name; }
+    virtual std::string getBreed() const { return breed; }
+    virtual int getAge() const { return age; }
+    virtual long getPrice() const { return price; }
     // bool getStatus() const { return status; }
-    std::string getStatus() const { return ((status == 1) ? "available" : "unvailable"); }
+    virtual std::string getStatus() const { return ((status == 1) ? "available" : "unvailable"); }
     std::string getDescription() const { return description; }
 
     // Setter
-    void setName(const std::string &newName) { name = newName; }
-    void setBreed(const std::string &newBreed) { breed = newBreed; }
-    void setAge(int newAge) { age = newAge; }
-    void setPrice(long newPrice) { price = newPrice; }
-    void setStatus(bool newStatus) { status = newStatus; }
-    void setDescription(const std::string &d) { description = d; }
+    virtual void setName(const std::string &newName) { name = newName; }
+    virtual void setBreed(const std::string &newBreed) { breed = newBreed; }
+    virtual void setAge(int newAge) { age = newAge; }
+    virtual void setPrice(long newPrice) { price = newPrice; }
+    virtual void setStatus(bool newStatus) { status = newStatus; }
+    virtual void setDescription(const std::string &d) { description = d; }
 
     // Phương thức ảo để biết loại thú
     virtual std::string getType() const = 0;

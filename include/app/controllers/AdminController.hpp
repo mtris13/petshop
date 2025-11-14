@@ -242,40 +242,6 @@ private:
 
         } else if (length == ClientIdLength) { // Client
             cout << "You are not able to update client's account!\n";
-
-            // Client client = accountRepo.getClientInfo(id);
-            // cout << "\nCurrent Info:\n"
-            //      << "Name: " << client.getName() << "\n"
-            //      << "Gender: " << client.getGender() << "\n"
-            //      << "Address: " << client.getStreet() << ", " << client.getCity() << "\n";
-
-            // cout << "\nEnter New Name (or press Enter to keep): ";
-            // getline(cin, name);
-            // if (!name.empty())
-            //     client.setName(name);
-
-            // cout << "Enter New Password (or press Enter to keep): ";
-            // getline(cin, password);
-            // if (!password.empty())
-            //     client.setPassword(password);
-
-            // cout << "Enter New Gender (or press Enter to keep): ";
-            // getline(cin, gender);
-            // if (!gender.empty())
-            //     client.setGender(gender);
-
-            // string street, city;
-            // cout << "Enter New Street (or press Enter to keep): ";
-            // getline(cin, street);
-            // if (!street.empty())
-            //     client.setStreet(street);
-
-            // cout << "Enter New City (or press Enter to keep): ";
-            // getline(cin, city);
-            // if (!city.empty())
-            //     client.setCity(city);
-
-            // accountRepo.setClientInfo(client);
         }
 
         Menu::displaySuccess("Account updated successfully!");
